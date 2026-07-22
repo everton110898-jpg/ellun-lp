@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Ellun · Lista de Acesso Exclusivo</title>
-<meta name="description" content="Entre no grupo de lançamento da Ellun no WhatsApp e viva o universo da marca antes de todo mundo.">
+<title>Ellun · Seja uma Fundadora</title>
+<meta name="description" content="Entre no Grupo VIP de lançamento da Ellun e torne-se uma Fundadora da marca.">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="Ellun · Faça parte do que vem primeiro">
-<meta property="og:description" content="Acesso antecipado às coleções, prioridade de tamanho e bastidores exclusivos. Entre no grupo.">
+<meta property="og:title" content="Ellun · Seja uma Fundadora">
+<meta property="og:description" content="Acesso antecipado, 10% exclusivo e lugar permanente. A condição de Fundadora só existe dentro do grupo.">
 <meta property="og:image" content="https://i.postimg.cc/TPd3R4SC/Ellun-30880-jpg-(1).jpg">
 <meta property="og:url" content="https://vip.ellunoficial.com.br/">
 <meta property="og:locale" content="pt_BR">
@@ -17,7 +17,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
   :root{
@@ -27,7 +27,6 @@
     --oliva:#6B6B4E;
     --dourado:#C9A96A;
     --dourado-claro:#D8C9AE;
-    --texto:#3A382F;
     --whatsapp:#128C4A;
   }
 
@@ -43,7 +42,7 @@
 
   .pagina{max-width:520px;margin:0 auto;background:var(--creme);}
 
-  /* ---------- HERO FULL-SCREEN ---------- */
+  /* ---------- HERO ---------- */
   .hero{
     position:relative;
     min-height:100svh;
@@ -57,14 +56,14 @@
     content:'';
     position:absolute;inset:0;
     background:linear-gradient(180deg,
-      rgba(20,25,12,.60) 0%,
-      rgba(20,25,12,.05) 32%,
-      rgba(20,20,15,.20) 60%,
-      rgba(15,12,8,.85) 100%);
+      rgba(20,25,12,.55) 0%,
+      rgba(20,25,12,.05) 30%,
+      rgba(20,20,15,.25) 58%,
+      rgba(15,12,8,.88) 100%);
   }
   .hero-topo,.hero-base{position:relative;z-index:2;text-align:center;}
   .hero-topo{padding:32px 24px 0;}
-  .hero-base{padding:0 24px 40px;}
+  .hero-base{padding:0 24px 32px;}
 
   .wordmark{
     text-shadow:0 1px 12px rgba(0,0,0,.7);
@@ -77,85 +76,154 @@
     color:#E5DBC4;margin-top:4px;opacity:.9;
   }
 
-  .selo{
-    display:inline-block;margin-bottom:18px;padding:7px 17px;
-    border:1px solid rgba(232,223,201,.7);border-radius:40px;
-    font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#F0E9D6;
+  .eyebrow{
+    display:flex;align-items:center;justify-content:center;gap:12px;
+    font-size:10px;letter-spacing:3px;text-transform:uppercase;
+    color:#EFE7D3;margin-bottom:16px;
+    text-shadow:0 1px 10px rgba(0,0,0,.8);
   }
+  .eyebrow::before,.eyebrow::after{
+    content:'';height:1px;width:26px;background:rgba(232,223,201,.6);
+  }
+
   .hero h1{
     font-family:'Cormorant Garamond',serif;
-    font-size:clamp(32px,9vw,42px);line-height:1.18;font-weight:500;color:#F7F3EA;
+    font-size:clamp(34px,10vw,46px);line-height:1.12;font-weight:500;color:#F7F3EA;
+    text-shadow:0 2px 20px rgba(0,0,0,.5);
   }
+  .hero h1 em{font-style:italic;font-weight:400;display:block;}
+
   .hero p{
-    font-size:14px;line-height:1.65;color:#ECE6D8;margin-top:16px;
-    max-width:340px;margin-left:auto;margin-right:auto;
+    font-size:14.5px;line-height:1.6;color:#ECE6D8;margin-top:16px;
+    max-width:330px;margin-left:auto;margin-right:auto;
+    text-shadow:0 1px 10px rgba(0,0,0,.6);
   }
+
+  .scroll-cue{
+    position:relative;z-index:2;text-align:center;padding-bottom:22px;
+    font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#D5CCB8;
+  }
+  .scroll-cue span{display:block;font-size:15px;margin-top:6px;}
 
   /* ---------- BOTÃO ---------- */
   .btn{
-    display:block;margin:26px auto 8px;max-width:340px;
+    display:block;margin:24px auto 10px;max-width:340px;
     background:var(--whatsapp);color:#fff;text-decoration:none;
-    padding:16px;border-radius:12px;
-    font-size:15.5px;font-weight:500;letter-spacing:.3px;
+    padding:17px;border-radius:10px;
+    font-size:14px;font-weight:500;letter-spacing:2px;text-transform:uppercase;
+    box-shadow:0 6px 24px rgba(0,0,0,.25);
     transition:opacity .2s;
   }
-  .btn:hover{opacity:.9;}
-  .btn-nota{font-size:11px;letter-spacing:.5px;color:#D9D1BE;}
-  .btn-nota-escura{font-size:11px;letter-spacing:.5px;color:#8A8578;margin-top:8px;}
+  .btn:hover{opacity:.92;}
+  .btn-nota{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#D9D1BE;}
+  .btn-nota-clara{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#A69F8E;}
 
   /* ---------- SEÇÕES ---------- */
   .rotulo{
-    font-size:10px;letter-spacing:3px;text-transform:uppercase;
+    font-size:10px;letter-spacing:3.5px;text-transform:uppercase;
     color:var(--oliva);text-align:center;
   }
 
-  .movimento{background:var(--creme-escuro);padding:44px 26px;text-align:center;}
-  .movimento p{
+  .circulo{background:var(--creme-escuro);padding:56px 28px;text-align:center;}
+  .circulo p{
     font-family:'Cormorant Garamond',serif;
-    font-size:23px;line-height:1.5;margin-top:14px;color:var(--carvao);
+    font-size:25px;line-height:1.45;margin-top:22px;color:var(--carvao);
+  }
+  .circulo p em{font-style:italic;}
+  .circulo .origem{
+    font-family:'Jost',sans-serif;font-size:13.5px;line-height:1.7;
+    color:#5A5A4C;margin-top:22px;
   }
 
-  .beneficios{padding:44px 26px;}
-  .lista{display:flex;flex-direction:column;gap:20px;margin-top:26px;}
-  .item{display:flex;gap:15px;align-items:flex-start;}
+  /* ---------- FOTO LIFESTYLE + SLOGAN ---------- */
+  .lifestyle{
+    position:relative;
+    height:78svh;
+    height:78vh;
+    min-height:420px;
+    background:url('https://i.postimg.cc/pVzHgwYs/Ellun-31198.jpg') center 30%/cover no-repeat;
+    display:flex;align-items:flex-end;
+  }
+  .lifestyle::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg,
+      rgba(20,25,12,.10) 0%,
+      rgba(20,20,15,.05) 45%,
+      rgba(15,12,8,.80) 100%);
+  }
+  .lifestyle-txt{
+    position:relative;z-index:2;width:100%;
+    padding:0 30px 44px;text-align:center;
+  }
+  .lifestyle-txt .rotulo{color:#D8CFB8;}
+  .lifestyle-txt p{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:29px;line-height:1.3;color:#F7F3EA;margin-top:14px;
+    text-shadow:0 2px 18px rgba(0,0,0,.6);
+  }
+
+  /* ---------- CONDIÇÃO ---------- */
+  .condicao{padding:56px 28px 40px;}
+  .condicao .rotulo{margin-bottom:34px;}
+  .item{
+    display:flex;gap:18px;align-items:flex-start;
+    padding:22px 0;border-top:1px solid #E0D7C4;
+  }
+  .item:last-child{border-bottom:1px solid #E0D7C4;}
   .num{
-    font-family:'Cormorant Garamond',serif;
-    font-size:21px;color:var(--dourado);min-width:24px;line-height:1.3;
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:19px;color:#A9A08A;min-width:26px;line-height:1.4;
   }
-  .item span:last-child{font-size:14px;line-height:1.6;color:var(--texto);}
+  .item-titulo{
+    font-size:12px;letter-spacing:2.2px;text-transform:uppercase;
+    font-weight:500;color:var(--carvao);
+  }
+  .item-desc{font-size:13.5px;line-height:1.6;color:#6E6A5C;margin-top:7px;}
 
-  .datas{
-    margin:0 26px;padding:26px 22px;
-    background:var(--carvao);border-radius:16px;text-align:center;
-  }
+  /* ---------- DATAS ---------- */
+  .datas{margin:12px 28px 0;padding:30px 24px;background:var(--carvao);border-radius:14px;text-align:center;}
   .datas .rotulo{color:var(--dourado);}
-  .datas-grid{display:flex;gap:14px;margin-top:20px;}
+  .datas-grid{display:flex;gap:16px;margin-top:22px;}
   .data{flex:1;}
-  .data-num{font-family:'Cormorant Garamond',serif;font-size:28px;color:#E8DFC9;}
-  .data-txt{font-size:11px;line-height:1.5;color:#A69F8E;margin-top:5px;}
+  .data-num{font-family:'Cormorant Garamond',serif;font-size:23px;line-height:1.2;color:#E8DFC9;}
+  .data-txt{font-size:11px;line-height:1.55;color:#A69F8E;margin-top:7px;}
   .divisor{width:1px;background:#47443D;}
 
-  .colecoes{padding:44px 26px 26px;text-align:center;}
-  .colecoes-grid{display:flex;gap:13px;margin-top:20px;}
-  .colecao{
-    flex:1;padding:20px 12px;
-    border:1px solid var(--dourado-claro);border-radius:12px;
-  }
-  .colecao-nome{font-family:'Cormorant Garamond',serif;font-size:21px;}
-  .colecao-desc{font-size:11px;line-height:1.5;color:var(--oliva);margin-top:4px;}
+  /* ---------- COLEÇÕES ---------- */
+  .colecoes{padding:52px 28px 0;text-align:center;}
+  .colecoes-grid{display:flex;gap:14px;margin-top:22px;}
+  .colecao{flex:1;padding:22px 12px;border:1px solid var(--dourado-claro);border-radius:12px;}
+  .colecao-nome{font-family:'Cormorant Garamond',serif;font-size:22px;}
+  .colecao-desc{font-size:11px;line-height:1.5;color:var(--oliva);margin-top:5px;}
 
-  .fecho{padding:14px 26px 44px;text-align:center;}
-  .fecho p{font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:4px;}
-
-  .rodape{
-    background:var(--creme-escuro);border-top:1px solid #DDD3C0;
-    padding:28px;text-align:center;
+  /* ---------- PRAZO ---------- */
+  .prazo{padding:56px 30px;text-align:center;}
+  .prazo p{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:22px;line-height:1.5;color:var(--carvao);
   }
-  .rodape-marca{
+  .traco{width:56px;height:1px;background:#C4B99F;margin:0 auto 26px;}
+
+  /* ---------- FECHO ESCURO ---------- */
+  .fecho{background:var(--carvao);padding:64px 28px;text-align:center;}
+  .fecho h2{
     font-family:'Cormorant Garamond',serif;
-    font-size:16px;letter-spacing:5px;color:var(--carvao);
+    font-size:35px;line-height:1.15;font-weight:500;color:#F5F0E7;
   }
-  .rodape-info{font-size:10.5px;color:#8A8578;margin-top:8px;letter-spacing:.5px;}
+  .fecho h2 em{font-style:italic;font-weight:400;display:block;}
+  .fecho p{
+    font-size:14px;line-height:1.65;color:#B8B2A2;margin-top:18px;
+    max-width:320px;margin-left:auto;margin-right:auto;
+  }
+
+  /* ---------- RODAPÉ ---------- */
+  .rodape{background:var(--creme-escuro);padding:44px 28px;text-align:center;}
+  .rodape-marca{font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:6px;color:var(--carvao);}
+  .selos{
+    font-size:9.5px;letter-spacing:2.2px;text-transform:uppercase;
+    color:#8A8578;margin-top:20px;line-height:2;
+  }
+  .rodape-info{font-size:11px;color:#8A8578;margin-top:18px;letter-spacing:.5px;}
   .rodape-info a{color:#8A8578;text-decoration:none;}
 </style>
 </head>
@@ -170,27 +238,81 @@
     </div>
 
     <div class="hero-base">
-      <div class="selo">Lista de acesso exclusivo</div>
-      <h1>Faça parte do que<br>vem primeiro</h1>
-      <p>Entre no grupo de lançamento no WhatsApp e viva o universo Ellun antes de todo mundo.</p>
-      <a class="btn" href="https://chat.whatsapp.com/HbdUNSUGpzI7vLPhYY6ZC9">Entrar no grupo exclusivo</a>
-      <div class="btn-nota">Gratuito · Vagas limitadas · As primeiras garantem prioridade</div>
+      <div class="eyebrow">Lançamento 08.09 · Grupo VIP</div>
+      <h1>Seja uma<em>Fundadora Ellun</em></h1>
+      <p>As duas primeiras coleções da marca. E um lugar reservado para quem chega antes.</p>
+      <a class="btn" href="https://chat.whatsapp.com/HbdUNSUGpzI7vLPhYY6ZC9">Entrar no Grupo VIP</a>
+      <div class="btn-nota">Gratuito · Só até 08 de setembro</div>
+    </div>
+
+    <div class="scroll-cue">
+      A condição de Fundadora
+      <span>↓</span>
     </div>
   </header>
 
-  <section class="movimento">
-    <div class="rotulo">O movimento</div>
-    <p>Mais do que uma marca — um círculo de mulheres que não separam elegância de movimento.</p>
+  <section class="circulo">
+    <div class="rotulo">O círculo</div>
+    <p>Antes de ser uma coleção, a Ellun é um <em>círculo</em>. As Fundadoras são as primeiras a vestir, as primeiras a escolher e as únicas com lugar garantido em cada capítulo.</p>
+    <p class="origem">Cada peça nasce na nossa própria fábrica.</p>
   </section>
 
-  <section class="beneficios">
-    <div class="rotulo">O que você recebe</div>
-    <div class="lista">
-      <div class="item"><span class="num">01</span><span>Acesso antecipado às coleções, antes da abertura oficial</span></div>
-      <div class="item"><span class="num">02</span><span>Prioridade na escolha do seu tamanho</span></div>
-      <div class="item"><span class="num">03</span><span>Bastidores, prévias e a história dos tecidos que ninguém mais vê</span></div>
-      <div class="item"><span class="num">04</span><span>Convite para as lives de lançamento</span></div>
-      <div class="item"><span class="num">05</span><span>Entrada na comunidade Ellun, com aulas gratuitas de pilates, yoga e funcional</span></div>
+  <section class="lifestyle">
+    <div class="lifestyle-txt">
+      <div class="rotulo">A vida inteira</div>
+      <p>Do café ao treino,<br>sem trocar de roupa.</p>
+    </div>
+  </section>
+
+  <section class="condicao">
+    <div class="rotulo">A condição de Fundadora</div>
+
+    <div class="item">
+      <span class="num">01</span>
+      <div>
+        <div class="item-titulo">Acesso antecipado</div>
+        <div class="item-desc">48 horas antes da abertura ao público, com prioridade de cor e tamanho.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="num">02</span>
+      <div>
+        <div class="item-titulo">10% exclusivo</div>
+        <div class="item-desc">Cupom de uso único, válido só na janela das Fundadoras.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="num">03</span>
+      <div>
+        <div class="item-titulo">Primeira troca por nossa conta</div>
+        <div class="item-desc">Para você escolher sem receio de errar o tamanho.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="num">04</span>
+      <div>
+        <div class="item-titulo">Bastidores da fábrica</div>
+        <div class="item-desc">Os tecidos, as provas e o processo, direto de Fabrica.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="num">05</span>
+      <div>
+        <div class="item-titulo">Comunidade Ellun</div>
+        <div class="item-desc">Aulas gratuitas de pilates, yoga e funcional.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="num">06</span>
+      <div>
+        <div class="item-titulo">Lugar permanente</div>
+        <div class="item-desc">Prioridade e canal exclusivo em todos os próximos lançamentos.</div>
+      </div>
     </div>
   </section>
 
@@ -198,12 +320,12 @@
     <div class="rotulo">Guarde essas datas</div>
     <div class="datas-grid">
       <div class="data">
-        <div class="data-num">08/09</div>
+        <div class="data-num">08 de<br>setembro</div>
         <div class="data-txt">Acesso exclusivo e antecipado do grupo às coleções</div>
       </div>
       <div class="divisor"></div>
       <div class="data">
-        <div class="data-num">10/09</div>
+        <div class="data-num">10 de<br>setembro</div>
         <div class="data-txt">Abertura oficial do e-commerce</div>
       </div>
     </div>
@@ -223,14 +345,21 @@
     </div>
   </section>
 
+  <section class="prazo">
+    <div class="traco"></div>
+    <p>A condição de Fundadora encerra em 08 de setembro — e só existe dentro do grupo.</p>
+  </section>
+
   <section class="fecho">
-    <p>Seu lugar no movimento começa aqui.</p>
-    <a class="btn" href="https://chat.whatsapp.com/HbdUNSUGpzI7vLPhYY6ZC9">Entrar no grupo exclusivo</a>
-    <div class="btn-nota-escura">Gratuito · Vagas limitadas</div>
+    <h2>Seu lugar no<em>movimento</em></h2>
+    <p>Entre para o Grupo VIP de lançamento e receba os benefícios que só as Fundadoras recebem.</p>
+    <a class="btn" href="https://chat.whatsapp.com/HbdUNSUGpzI7vLPhYY6ZC9">Entrar no Grupo VIP</a>
+    <div class="btn-nota-clara">Gratuito · Só até 08 de setembro</div>
   </section>
 
   <footer class="rodape">
     <div class="rodape-marca">ELLUN</div>
+    <div class="selos">Fábrica própria · Tecidos premium · 7 dias para trocar</div>
     <div class="rodape-info">
       ellunoficial.com.br · <a href="https://instagram.com/ellunoficial">@ellunoficial</a>
     </div>
