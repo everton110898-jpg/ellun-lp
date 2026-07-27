@@ -241,7 +241,7 @@ const PRIOS={Alta:"var(--clay)",Média:"var(--gold)",Baixa:"var(--mute)"};
 const STAGE_COLORS=["var(--mute)","var(--gold)","var(--olive)","var(--oliveDeep)","var(--clay)","var(--oliveDeep)"];
 /* catálogo de referências (modelos). consumoTecido em kg/peça */
 const SEED_REFS={
-  E001:{produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:0.330,tempoTotal:17,sequencia:[
+  E001:{produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:0.330,consumoForro:0.015,tempoTotal:17,sequencia:[
     {op:"Bainhar bolso inclinado — 2 ag., 2 cm, 2x",maq:"Cobertura"},
     {op:"Bainhar bolso menor — 2 ag., 2 cm, 2x",maq:"Cobertura"},
     {op:"Unir bolso inclinado e bolso menor no recorte — 2x",maq:"Reta"},
@@ -260,7 +260,7 @@ const SEED_REFS={
     {op:"Aplicar plaquinha de metal",maq:"Manual"},
     {op:"Cortar fio e revisar",maq:"Manual"},
   ]},
-  E002:{produto:"Shorts com bolso lateral",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:0.220,tempoTotal:8,sequencia:[
+  E002:{produto:"Shorts com bolso lateral",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:0.220,consumoForro:0.015,tempoTotal:8,sequencia:[
     {op:"Bainhar bolso inclinado — 2 ag., 2 cm, 2x",maq:"Cobertura"},
     {op:"Bainhar bolso menor — 2 ag., 2 cm, 2x",maq:"Cobertura"},
     {op:"Unir bolso inclinado e bolso menor no recorte — 2x",maq:"Reta"},
@@ -277,10 +277,10 @@ const SEED_REFS={
     {op:"Aplicar plaquinha de metal",maq:"Manual"},
     {op:"Cortar fio e revisar",maq:"Manual"},
   ]},
-  E003:{produto:"Top alça rolotê",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:0.075,tempoTotal:14},
-  E004:{produto:"Top nadador",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.110,tempoTotal:13},
-  E005:{produto:"Legging recorte + bolso traseiro",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.300,tempoTotal:9},
-  E006:{produto:"Top com recorte",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.110,tempoTotal:12,sequencia:[
+  E003:{produto:"Top rolotê (forro no próprio Trend Glam)",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:0.090,consumoForro:0,tempoTotal:14},
+  E004:{produto:"Top nadador",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.110,consumoForro:0.010,tempoTotal:13},
+  E005:{produto:"Legging recorte + bolso traseiro",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.300,consumoForro:0.015,tempoTotal:9},
+  E006:{produto:"Top com recorte",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.110,consumoForro:0.010,tempoTotal:12,sequencia:[
     {op:"Fechar ombro forro (frente e costa)",maq:"Overloque"},
     {op:"Fechar ombro externo (frente e costa)",maq:"Overloque"},
     {op:"Fechar decote unindo forro e parte externa",maq:"Overloque"},
@@ -291,7 +291,7 @@ const SEED_REFS={
     {op:"Pregar cós em anel",maq:"Overloque"},
     {op:"Cortar fio e revisar",maq:"Manual"},
   ]},
-  E007:{produto:"Legging recorte + top",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.300,tempoTotal:10},
+  E007:{produto:"Legging recorte + top",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.300,consumoForro:0.015,tempoTotal:10},
 };
 const refCodes=()=>Object.keys(state.refs);
 const MAQUINAS=["Reta","Overloque","Cobertura","Cobertura 2 ag.","Galoneira","Travete","Manual"];
@@ -325,12 +325,12 @@ const store={
 
 /* ---------------- seed ---------------- */
 const SEED=[
-  {id:"op-1",codigo:"OP-001",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Couro (Marrom)",grade:{P:30,M:40,G:26},prioridade:"Alta",responsavel:"Célula Corte",prazo:addDays(6),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"corte",entradaEtapa:addDays(-2),obs:"Lote de lançamento"},
-  {id:"op-2",codigo:"OP-002",referencia:"E003",produto:"Top alça rolotê",colecao:"Áurea",tecido:"Trend Glam",cor:"Cacto (Verde)",grade:{P:24,M:32,G:20},prioridade:"Alta",responsavel:"Célula Costura A",prazo:addDays(4),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"costura",entradaEtapa:addDays(-3),obs:""},
+  {id:"op-1",codigo:"OP-001",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Couro",grade:{P:30,M:40,G:26},prioridade:"Alta",responsavel:"Célula Corte",prazo:addDays(6),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"corte",entradaEtapa:addDays(-2),obs:"Lote de lançamento"},
+  {id:"op-2",codigo:"OP-002",referencia:"E003",produto:"Top alça rolotê",colecao:"Áurea",tecido:"Trend Glam",cor:"Cacto",grade:{P:24,M:32,G:20},prioridade:"Alta",responsavel:"Célula Costura A",prazo:addDays(4),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"costura",entradaEtapa:addDays(-3),obs:""},
   {id:"op-3",codigo:"OP-003",referencia:"E005",produto:"Legging recorte + bolso traseiro",colecao:"Essen",tecido:"Hyper Soft",cor:"Preto",grade:{P:22,M:36,G:24},prioridade:"Média",responsavel:"Planejamento",prazo:addDays(12),lote:"Reposição 01",entregaEcom:addDays(18),etapa:"ordem",entradaEtapa:today(),obs:"Aguardando liberação de tecido"},
   {id:"op-4",codigo:"OP-004",referencia:"E007",produto:"Legging recorte + top",colecao:"Essen",tecido:"Hyper Soft",cor:"Cocoa",grade:{P:18,M:26,G:18},prioridade:"Média",responsavel:"Acabamento",prazo:addDays(-1),lote:"Lançamento Jul/26",entregaEcom:addDays(3),etapa:"acabamento",entradaEtapa:addDays(-4),obs:"Etiquetas em falta"},
   {id:"op-5",codigo:"OP-005",referencia:"E004",produto:"Top nadador",colecao:"Essen",tecido:"Hyper Soft",cor:"Cashmere",grade:{P:14,M:20,G:12},prioridade:"Baixa",responsavel:"Controle de Qualidade",prazo:addDays(9),lote:"Reposição 01",entregaEcom:addDays(16),etapa:"qualidade",entradaEtapa:addDays(-1),obs:""},
-  {id:"op-6",codigo:"OP-006",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Brulée (Bege)",grade:{P:18,M:28,G:16},prioridade:"Alta",responsavel:"Estoque",prazo:addDays(-3),lote:"Lançamento Jul/26",entregaEcom:addDays(1),etapa:"pronto",entradaEtapa:addDays(-1),obs:"Conferido e embalado"},
+  {id:"op-6",codigo:"OP-006",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Brulée",grade:{P:18,M:28,G:16},prioridade:"Alta",responsavel:"Estoque",prazo:addDays(-3),lote:"Lançamento Jul/26",entregaEcom:addDays(1),etapa:"pronto",entradaEtapa:addDays(-1),obs:"Conferido e embalado"},
 ];
 
 /* ---------------- seed aviamentos ---------------- */
@@ -940,10 +940,9 @@ function avMatch(av,o){
   const a=av.aplicaA;
   let ok;
   if(!a||a==="Todas")ok=true;
-  else if(a===o.colecao||a===o.referencia)ok=true;  /* coleção OU referência específica */
-  else ok=false;
+  else{const parts=String(a).split(",").map(x=>x.trim()).filter(Boolean);ok=parts.some(p=>p===o.colecao||p===o.referencia);}
   if(!ok)return false;
-  if(av.cor&&norm(av.cor)!==norm(o.cor))return false; /* cor específica (tecido/forro) */
+  if(av.cor){const cors=String(av.cor).split(",").map(x=>norm(x)).filter(Boolean);if(!cors.includes(norm(o.cor)))return false;}
   return true;
 }
 /* consumo por peça: se o aviamento tem consumo por referência (caso dos tecidos),
@@ -1074,7 +1073,9 @@ function openAvModal(mode,id){
   const f=av||{item:"",tipo:"aviamento",fornecedor:"",unidade:"un",precoUnit:"",consumoPeca:"",aplicaA:"Todas",tamanho:"",cor:"",etapaConsumo:"costura",estoque:"",minimo:"",leadTime:"",emTransito:false,obs:""};
   const opt=(arr,v)=>arr.map(x=>`<option ${x===v?"selected":""}>${x}</option>`).join("");
   const isFab=(f.tipo||"aviamento")!=="aviamento";
-  const aplicaOpts=AV_APLICA.map(x=>`<option value="${x}" ${x===f.aplicaA?"selected":""}>${x}</option>`).join("")+refCodes().map(c=>`<option value="${c}" ${c===f.aplicaA?"selected":""}>Ref. ${c}</option>`).join("");
+  const stdVals=[...AV_APLICA,...refCodes()];
+  const extraApl=(f.aplicaA&&!stdVals.includes(f.aplicaA))?`<option value="${esc(f.aplicaA)}" selected>Vários: ${esc(f.aplicaA)}</option>`:"";
+  const aplicaOpts=extraApl+AV_APLICA.map(x=>`<option value="${x}" ${x===f.aplicaA?"selected":""}>${x}</option>`).join("")+refCodes().map(c=>`<option value="${c}" ${c===f.aplicaA?"selected":""}>Ref. ${c}</option>`).join("");
   const cores=Array.from(new Set(state.aviamentos.map(a=>a.cor).filter(Boolean)));
 
   document.getElementById("modalRoot").innerHTML=`
