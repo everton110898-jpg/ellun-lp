@@ -235,7 +235,8 @@ const STAGES=[
   {key:"pronto",label:"Pronto · Estoque"},
 ];
 const STAGE_KEYS=STAGES.map(s=>s.key);
-const SIZES=["PP","P","M","G","GG"];
+const SIZES=["P","M","G"];
+const norm=s=>String(s==null?"":s).trim().toLowerCase();
 const PRIOS={Alta:"var(--clay)",Média:"var(--gold)",Baixa:"var(--mute)"};
 const STAGE_COLORS=["var(--mute)","var(--gold)","var(--olive)","var(--oliveDeep)","var(--clay)","var(--oliveDeep)"];
 /* catálogo de referências (modelos). consumoTecido em kg/peça */
@@ -324,12 +325,12 @@ const store={
 
 /* ---------------- seed ---------------- */
 const SEED=[
-  {id:"op-1",codigo:"OP-001",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Oliva",grade:{PP:8,P:22,M:36,G:22,GG:8},prioridade:"Alta",responsavel:"Célula Corte",prazo:addDays(6),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"corte",entradaEtapa:addDays(-2),obs:"Lote de lançamento"},
-  {id:"op-2",codigo:"OP-002",referencia:"E003",produto:"Top alça rolotê",colecao:"Áurea",tecido:"Trend Glam",cor:"Areia",grade:{PP:10,P:20,M:28,G:18,GG:6},prioridade:"Alta",responsavel:"Célula Costura A",prazo:addDays(4),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"costura",entradaEtapa:addDays(-3),obs:""},
-  {id:"op-3",codigo:"OP-003",referencia:"E005",produto:"Legging recorte + bolso traseiro",colecao:"Essen",tecido:"Hyper Soft",cor:"Grafite",grade:{PP:6,P:18,M:30,G:20,GG:8},prioridade:"Média",responsavel:"Planejamento",prazo:addDays(12),lote:"Reposição 01",entregaEcom:addDays(18),etapa:"ordem",entradaEtapa:today(),obs:"Aguardando liberação de tecido"},
-  {id:"op-4",codigo:"OP-004",referencia:"E007",produto:"Legging recorte + top",colecao:"Essen",tecido:"Hyper Soft",cor:"Creme",grade:{PP:5,P:15,M:22,G:15,GG:5},prioridade:"Média",responsavel:"Acabamento",prazo:addDays(-1),lote:"Lançamento Jul/26",entregaEcom:addDays(3),etapa:"acabamento",entradaEtapa:addDays(-4),obs:"Etiquetas em falta"},
-  {id:"op-5",codigo:"OP-005",referencia:"E004",produto:"Top nadador",colecao:"Essen",tecido:"Hyper Soft",cor:"Ouro suave",grade:{PP:4,P:12,M:16,G:10,GG:4},prioridade:"Baixa",responsavel:"Controle de Qualidade",prazo:addDays(9),lote:"Reposição 01",entregaEcom:addDays(16),etapa:"qualidade",entradaEtapa:addDays(-1),obs:""},
-  {id:"op-6",codigo:"OP-006",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Grafite",grade:{PP:6,P:16,M:24,G:16,GG:6},prioridade:"Alta",responsavel:"Estoque",prazo:addDays(-3),lote:"Lançamento Jul/26",entregaEcom:addDays(1),etapa:"pronto",entradaEtapa:addDays(-1),obs:"Conferido e embalado"},
+  {id:"op-1",codigo:"OP-001",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Couro (Marrom)",grade:{P:30,M:40,G:26},prioridade:"Alta",responsavel:"Célula Corte",prazo:addDays(6),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"corte",entradaEtapa:addDays(-2),obs:"Lote de lançamento"},
+  {id:"op-2",codigo:"OP-002",referencia:"E003",produto:"Top alça rolotê",colecao:"Áurea",tecido:"Trend Glam",cor:"Cacto (Verde)",grade:{P:24,M:32,G:20},prioridade:"Alta",responsavel:"Célula Costura A",prazo:addDays(4),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"costura",entradaEtapa:addDays(-3),obs:""},
+  {id:"op-3",codigo:"OP-003",referencia:"E005",produto:"Legging recorte + bolso traseiro",colecao:"Essen",tecido:"Hyper Soft",cor:"Preto",grade:{P:22,M:36,G:24},prioridade:"Média",responsavel:"Planejamento",prazo:addDays(12),lote:"Reposição 01",entregaEcom:addDays(18),etapa:"ordem",entradaEtapa:today(),obs:"Aguardando liberação de tecido"},
+  {id:"op-4",codigo:"OP-004",referencia:"E007",produto:"Legging recorte + top",colecao:"Essen",tecido:"Hyper Soft",cor:"Cocoa",grade:{P:18,M:26,G:18},prioridade:"Média",responsavel:"Acabamento",prazo:addDays(-1),lote:"Lançamento Jul/26",entregaEcom:addDays(3),etapa:"acabamento",entradaEtapa:addDays(-4),obs:"Etiquetas em falta"},
+  {id:"op-5",codigo:"OP-005",referencia:"E004",produto:"Top nadador",colecao:"Essen",tecido:"Hyper Soft",cor:"Cashmere",grade:{P:14,M:20,G:12},prioridade:"Baixa",responsavel:"Controle de Qualidade",prazo:addDays(9),lote:"Reposição 01",entregaEcom:addDays(16),etapa:"qualidade",entradaEtapa:addDays(-1),obs:""},
+  {id:"op-6",codigo:"OP-006",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Brulée (Bege)",grade:{P:18,M:28,G:16},prioridade:"Alta",responsavel:"Estoque",prazo:addDays(-3),lote:"Lançamento Jul/26",entregaEcom:addDays(1),etapa:"pronto",entradaEtapa:addDays(-1),obs:"Conferido e embalado"},
 ];
 
 /* ---------------- seed aviamentos ---------------- */
@@ -367,7 +368,7 @@ async function init(){
     state.baixas={};
     const idx=k=>STAGE_KEYS.indexOf(k);
     state.ops.forEach(o=>state.aviamentos.forEach(av=>{
-      if(avMatch(av.aplicaA,o)&&idx(o.etapa)>=idx(av.etapaConsumo||"costura"))
+      if(avMatch(av,o)&&idx(o.etapa)>=idx(av.etapaConsumo||"costura"))
         state.baixas[o.id+"|"+av.id]={amount:avBaixa(av,o)};
     }));
     persistBx();
@@ -422,7 +423,7 @@ function reconcile(){
   state.ops.forEach(o=>state.aviamentos.forEach(av=>{
     const key=o.id+"|"+av.id;
     const rec=state.baixas[key]?state.baixas[key].amount:0;
-    const aplica=avMatch(av.aplicaA,o);
+    const aplica=avMatch(av,o);
     const crossed=aplica&&idx(o.etapa)>=idx(av.etapaConsumo||"costura");
     const target=crossed?avBaixa(av,o):0;
     if(target!==rec){
@@ -498,7 +499,10 @@ function openRefModal(mode,code){
         <div class="field"><label>Tecido</label><input id="r_tec" value="${esc(f.tecido)}" placeholder="Trend Glam / Hyper Soft" list="tecList"><datalist id="tecList"><option>Trend Glam</option><option>Hyper Soft</option></datalist></div>
         <div class="field"><label>Consumo de tecido (kg/peça)</label><input type="number" step="0.001" min="0" id="r_cons" value="${f.consumoTecido}"></div>
       </div>
-      <div class="field"><label>Tempo por peça (min)</label><input type="number" step="0.1" min="0" id="r_tempo" value="${f.tempoTotal}"></div>
+      <div class="g2">
+        <div class="field"><label>Consumo de forro (kg/peça)</label><input type="number" step="0.001" min="0" id="r_forro" value="${f.consumoForro!=null?f.consumoForro:""}"></div>
+        <div class="field"><label>Tempo por peça (min)</label><input type="number" step="0.1" min="0" id="r_tempo" value="${f.tempoTotal}"></div>
+      </div>
       <div class="field"><label>Sequência operacional</label>
         <div id="refSeq"></div>
         <button class="btn" id="seqAdd" style="margin-top:8px;background:var(--creamDeep);border:1px solid var(--line);border-radius:4px;padding:7px 12px;font-size:12px;color:var(--oliveDeep);letter-spacing:.3px">+ Adicionar operação</button>
@@ -543,6 +547,7 @@ function openRefModal(mode,code){
       colecao:document.getElementById("r_col").value,
       tecido:document.getElementById("r_tec").value.trim(),
       consumoTecido:Number(document.getElementById("r_cons").value)||0,
+      consumoForro:Number(document.getElementById("r_forro").value)||0,
       tempoTotal:Number(document.getElementById("r_tempo").value)||0,
     };
     state.refs[cod]={...(state.refs[cod]||{}),...data};
@@ -725,9 +730,10 @@ function attachBoard(){
 /* ---------------- modal ---------------- */
 function openModal(mode,id){
   const op=mode==="edit"?state.ops.find(o=>o.id===id):null;
-  const f=op||{referencia:"",produto:"",colecao:"Áurea",tecido:"Trend Glam",cor:"",grade:{PP:0,P:0,M:0,G:0,GG:0},prioridade:"Média",responsavel:"",prazo:"",lote:"",entregaEcom:"",obs:""};
+  const f=op||{referencia:"",produto:"",colecao:"Áurea",tecido:"Trend Glam",cor:"",grade:{P:0,M:0,G:0},prioridade:"Média",responsavel:"",prazo:"",lote:"",entregaEcom:"",obs:""};
   const code=mode==="new"?nextCode():op.codigo;
   const opt=(arr,v)=>arr.map(x=>`<option ${x===v?"selected":""}>${x}</option>`).join("");
+  const opCores=Array.from(new Set(state.aviamentos.filter(a=>a.tipo==="tecido").map(a=>a.cor).filter(Boolean)));
   const gin=SIZES.map(s=>`<div><div class="s">${s}</div><input type="number" min="0" id="g_${s}" value="${(f.grade&&f.grade[s])||""}"></div>`).join("");
 
   document.getElementById("modalRoot").innerHTML=`
@@ -747,7 +753,7 @@ function openModal(mode,id){
           <div class="field"><label>Tecido</label><select id="m_tecido">${opt(["Trend Glam","Hyper Soft"],f.tecido)}</select></div>
         </div>
         <div class="g2">
-          <div class="field"><label>Cor</label><input id="m_cor" value="${esc(f.cor)}" placeholder="Oliva, Areia…"></div>
+          <div class="field"><label>Cor</label><input id="m_cor" value="${esc(f.cor)}" placeholder="Couro (Marrom)…" list="opCorList"><datalist id="opCorList">${opCores.map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
           <div class="field"><label>Prioridade</label><select id="m_prio">${opt(["Alta","Média","Baixa"],f.prioridade)}</select></div>
         </div>
         <div class="field"><label>Grade de tamanhos <span id="gtot" style="color:var(--olive)"></span></label><div class="grade-in">${gin}</div></div>
@@ -841,8 +847,8 @@ function printFicha(id){
   const total=gradeTotal(o.grade);
   const n3=v=>Number(v||0).toLocaleString("pt-BR",{maximumFractionDigits:3});
   const ref=(o.referencia&&state.refs[o.referencia])?state.refs[o.referencia]:null;
-  const applic=state.aviamentos.filter(av=>avMatch(av.aplicaA,o));
-  const tecidos=applic.filter(av=>av.tipo==="tecido");
+  const applic=state.aviamentos.filter(av=>avMatch(av,o));
+  const tecidos=applic.filter(av=>av.tipo==="tecido"||av.tipo==="forro");
   const aviam=applic.filter(av=>av.tipo!=="tecido");
 
   const matRow=av=>`<tr><td>${esc(av.item)}${av.tamanho?" · tam "+esc(av.tamanho):""}</td><td class="c">${esc(av.unidade||"")}</td><td class="r">${n3(avConsumo(av,o))}</td><td class="r">${n3(avBaixa(av,o))}</td></tr>`;
@@ -930,9 +936,15 @@ function printFicha(id){
 const brl=n=>"R$ "+(Number(n)||0).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtNum=n=>Number.isInteger(n)?n.toLocaleString("pt-BR"):(Math.round(n*10)/10).toLocaleString("pt-BR");
 
-function avMatch(aplicaA,o){
-  if(!aplicaA||aplicaA==="Todas")return true;
-  return aplicaA===o.colecao;
+function avMatch(av,o){
+  const a=av.aplicaA;
+  let ok;
+  if(!a||a==="Todas")ok=true;
+  else if(a===o.colecao||a===o.referencia)ok=true;  /* coleção OU referência específica */
+  else ok=false;
+  if(!ok)return false;
+  if(av.cor&&norm(av.cor)!==norm(o.cor))return false; /* cor específica (tecido/forro) */
+  return true;
 }
 /* consumo por peça: se o aviamento tem consumo por referência (caso dos tecidos),
    usa o valor da referência da OP; senão, usa o consumo fixo */
@@ -940,6 +952,10 @@ function avConsumo(av,o){
   if(av.tipo==="tecido"){
     const r=o.referencia&&state.refs[o.referencia];
     return r?Number(r.consumoTecido)||0:0;
+  }
+  if(av.tipo==="forro"){
+    const r=o.referencia&&state.refs[o.referencia];
+    return r?Number(r.consumoForro)||0:0;
   }
   const m=av.consumoPorRef;
   if(m&&o.referencia&&m[o.referencia]!=null&&m[o.referencia]!=="")return Number(m[o.referencia])||0;
@@ -960,7 +976,7 @@ function avDemanda(av){
   return state.ops
     .filter(o=>o.etapa!=="pronto")
     .filter(o=>escopo==="Todos"||o.lote===escopo)
-    .filter(o=>avMatch(av.aplicaA,o))
+    .filter(o=>avMatch(av,o))
     .filter(o=>STAGE_KEYS.indexOf(o.etapa)<consumeIdx)
     .reduce((t,o)=>t+avBaixa(av,o),0);
 }
@@ -1013,7 +1029,7 @@ function renderAviamentos(){
       <td><div class="av-item">${esc(av.item)}</div>${av.obs?`<div class="av-sub">${esc(av.obs)}</div>`:""}</td>
       <td>${esc(av.fornecedor||"—")}</td>
       <td class="num">${av.tipo==="tecido"?"por referência":fmtNum(Number(av.consumoPeca)||0)+" "+esc(av.unidade||"")}</td>
-      <td>${av.aplicaA==="Todas"?"Todas as peças":"Coleção "+esc(av.aplicaA)}${av.tamanho?" · tam "+esc(av.tamanho):""}<div class="av-sub">baixa na etapa: ${esc(stageLabel(av.etapaConsumo||"costura"))}</div></td>
+      <td>${av.aplicaA==="Todas"?"Todas as peças":(state.refs[av.aplicaA]?"Ref. "+esc(av.aplicaA):"Coleção "+esc(av.aplicaA))}${av.tamanho?" · tam "+esc(av.tamanho):""}${av.cor?" · "+esc(av.cor):""}<div class="av-sub">baixa na etapa: ${esc(stageLabel(av.etapaConsumo||"costura"))}</div></td>
       <td class="num">${fmtNum(Number(av.estoque)||0)} ${esc(av.unidade||"")}</td>
       <td class="num">${fmtNum(Number(av.minimo)||0)}</td>
       <td class="num">${fmtNum(dem)} ${esc(av.unidade||"")}</td>
@@ -1047,7 +1063,7 @@ function baselineAv(av){
   const idx=k=>STAGE_KEYS.indexOf(k);
   state.ops.forEach(o=>{
     const key=o.id+"|"+av.id;
-    const crossed=avMatch(av.aplicaA,o)&&idx(o.etapa)>=idx(av.etapaConsumo||"costura");
+    const crossed=avMatch(av,o)&&idx(o.etapa)>=idx(av.etapaConsumo||"costura");
     if(crossed)state.baixas[key]={amount:avBaixa(av,o)};
     else delete state.baixas[key];
   });
@@ -1055,9 +1071,11 @@ function baselineAv(av){
 
 function openAvModal(mode,id){
   const av=mode==="edit"?state.aviamentos.find(a=>a.id===id):null;
-  const f=av||{item:"",tipo:"aviamento",fornecedor:"",unidade:"un",precoUnit:"",consumoPeca:"",aplicaA:"Todas",tamanho:"",etapaConsumo:"costura",estoque:"",minimo:"",leadTime:"",emTransito:false,obs:""};
+  const f=av||{item:"",tipo:"aviamento",fornecedor:"",unidade:"un",precoUnit:"",consumoPeca:"",aplicaA:"Todas",tamanho:"",cor:"",etapaConsumo:"costura",estoque:"",minimo:"",leadTime:"",emTransito:false,obs:""};
   const opt=(arr,v)=>arr.map(x=>`<option ${x===v?"selected":""}>${x}</option>`).join("");
-  const isTec=(f.tipo||"aviamento")==="tecido";
+  const isFab=(f.tipo||"aviamento")!=="aviamento";
+  const aplicaOpts=AV_APLICA.map(x=>`<option value="${x}" ${x===f.aplicaA?"selected":""}>${x}</option>`).join("")+refCodes().map(c=>`<option value="${c}" ${c===f.aplicaA?"selected":""}>Ref. ${c}</option>`).join("");
+  const cores=Array.from(new Set(state.aviamentos.map(a=>a.cor).filter(Boolean)));
 
   document.getElementById("modalRoot").innerHTML=`
   <div class="overlay" id="avOv">
@@ -1068,7 +1086,7 @@ function openAvModal(mode,id){
       <div class="modal-body">
         <div class="g2">
           <div class="field"><label>Item</label><input id="a_item" value="${esc(f.item)}" placeholder="Ex.: Elástico 40mm"></div>
-          <div class="field"><label>Tipo</label><select id="a_tipo"><option value="aviamento" ${!isTec?"selected":""}>Aviamento</option><option value="tecido" ${isTec?"selected":""}>Tecido</option></select></div>
+          <div class="field"><label>Tipo</label><select id="a_tipo"><option value="aviamento" ${!isFab?"selected":""}>Aviamento</option><option value="tecido" ${f.tipo==="tecido"?"selected":""}>Tecido</option><option value="forro" ${f.tipo==="forro"?"selected":""}>Forro</option></select></div>
         </div>
         <div class="g2">
           <div class="field"><label>Fornecedor</label><input id="a_forn" value="${esc(f.fornecedor)}" placeholder="Fornecedor"></div>
@@ -1078,11 +1096,12 @@ function openAvModal(mode,id){
           <div class="field"><label>Preço unitário (R$)</label><input type="number" step="0.01" min="0" id="a_preco" value="${f.precoUnit}"></div>
           <div class="field" id="consumoField"><label>Consumo por peça</label><input type="number" step="0.001" min="0" id="a_consumo" value="${f.consumoPeca}" placeholder="ex.: 0,95"></div>
         </div>
-        <div class="mod-intro" id="tecNote" style="display:${isTec?"block":"none"};margin:-4px 0 8px">Tecido: o consumo por peça vem do campo <b>Consumo de tecido</b> de cada referência (módulo Cadastros).</div>
+        <div class="mod-intro" id="tecNote" style="display:${isFab?"block":"none"};margin:-4px 0 8px">Tecido/forro: o consumo por peça vem das referências (Consumo de tecido / de forro, no módulo Cadastros).</div>
         <div class="g2">
-          <div class="field"><label>Aplica-se a</label><select id="a_aplica">${opt(AV_APLICA,f.aplicaA)}</select></div>
+          <div class="field"><label>Aplica-se a</label><select id="a_aplica">${aplicaOpts}</select></div>
           <div class="field"><label>Tamanho (opcional)</label><select id="a_tam"><option value="">Todos os tamanhos</option>${SIZES.map(s=>`<option ${f.tamanho===s?"selected":""}>${s}</option>`).join("")}</select></div>
         </div>
+        <div class="field"><label>Cor (para tecido/forro)</label><input id="a_cor" value="${esc(f.cor||"")}" placeholder="Ex.: Couro (Marrom) — deixe vazio se não depende de cor" list="corList"><datalist id="corList">${cores.map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
         <div class="field"><label>Baixa na etapa</label><select id="a_etapa">${STAGES.map(s=>`<option value="${s.key}" ${(f.etapaConsumo||"costura")===s.key?"selected":""}>${s.label}</option>`).join("")}</select></div>
         <div class="g2">
           <div class="field"><label>Estoque atual</label><input type="number" step="0.01" min="0" id="a_estoque" value="${f.estoque}"></div>
@@ -1104,8 +1123,8 @@ function openAvModal(mode,id){
   const val=()=>{document.getElementById("avSave").disabled=!document.getElementById("a_item").value.trim();};
   document.getElementById("a_item").addEventListener("input",val);val();
   const tipoSel=document.getElementById("a_tipo");
-  const syncTipo=()=>{const t=tipoSel.value==="tecido";document.getElementById("consumoField").style.display=t?"none":"";document.getElementById("tecNote").style.display=t?"block":"none";};
-  tipoSel.addEventListener("change",syncTipo);
+  const syncTipo=()=>{const t=tipoSel.value!=="aviamento";document.getElementById("consumoField").style.display=t?"none":"";document.getElementById("tecNote").style.display=t?"block":"none";};
+  tipoSel.addEventListener("change",syncTipo);syncTipo();
   document.getElementById("avOv").addEventListener("click",e=>{if(e.target.id==="avOv")closeModal();});
   document.getElementById("avCancel").addEventListener("click",closeModal);
   document.getElementById("avSave").addEventListener("click",()=>{
@@ -1116,9 +1135,10 @@ function openAvModal(mode,id){
       fornecedor:document.getElementById("a_forn").value.trim(),
       unidade:document.getElementById("a_un").value,
       precoUnit:Number(document.getElementById("a_preco").value)||0,
-      consumoPeca:tipo==="tecido"?0:(Number(document.getElementById("a_consumo").value)||0),
+      consumoPeca:(tipo!=="aviamento")?0:(Number(document.getElementById("a_consumo").value)||0),
       aplicaA:document.getElementById("a_aplica").value,
       tamanho:document.getElementById("a_tam").value,
+      cor:document.getElementById("a_cor").value.trim(),
       etapaConsumo:document.getElementById("a_etapa").value,
       consumoPorRef:null,
       estoque:Number(document.getElementById("a_estoque").value)||0,
