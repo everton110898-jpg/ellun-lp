@@ -53,6 +53,11 @@
   .prio{margin-left:auto;font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;font-weight:600;}
   .prod{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;line-height:1.1;margin-bottom:5px;}
   .meta{font-size:11px;color:var(--olive);letter-spacing:.4px;margin-bottom:8px;}
+  .card-mid{display:flex;gap:8px;align-items:flex-start;}
+  .card-mid-txt{flex:1;min-width:0;}
+  .card-mid .meta{margin-bottom:0;}
+  .card-thumb{flex:0 0 auto;width:62px;height:74px;object-fit:cover;object-position:50% 40%;border:1px solid var(--line);border-radius:4px;background:#fff;cursor:pointer;}
+  .card-thumb:hover{border-color:var(--gold);}
   .grade{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;align-items:center;}
   .gchip{font-size:10px;background:var(--creamDeep);border:1px solid var(--line);border-radius:3px;padding:1px 5px;letter-spacing:.3px;}
   .gchip b{color:var(--oliveDeep);}
@@ -155,7 +160,7 @@
     #fichaRoot .ficha-overlay{position:static;background:none;padding:0;overflow:visible;}
     #fichaRoot .ficha-toolbar{display:none;}
     #fichaRoot .ficha-page{box-shadow:none;max-width:none;margin:0;padding:0;}
-    .ft-desenho{page-break-before:always;}
+    /* desenho técnico flui na posição, acima da composição */
     @page{margin:14mm;}
   }
   ::-webkit-scrollbar{height:8px;width:8px;}
@@ -681,8 +686,13 @@ function cardHTML(o,si){
       ${o.lote?`<span class="lote-tag">${esc(o.lote)}</span>`:""}
       <span class="prio" style="color:${PRIOS[o.prioridade]}">${o.prioridade}</span>
     </div>
-    <div class="prod">${esc(o.produto)}</div>
-    <div class="meta">${esc(o.colecao)} · ${esc(o.tecido)} · ${esc(o.cor)}</div>
+    <div class="card-mid">
+      <div class="card-mid-txt">
+        <div class="prod">${esc(o.produto)}</div>
+        <div class="meta">${esc(o.colecao)} · ${esc(o.tecido)} · ${esc(o.cor)}</div>
+      </div>
+      ${o.referencia?`<img class="card-thumb" src="${esc(o.referencia)}.png" data-act="ficha" title="Ver ficha técnica" onerror="this.style.display='none'">`:""}
+    </div>
     <div class="grade">${chips}<span class="gtotal">${total} un.</span></div>
     <div class="spine">${spine}</div>
     <div class="row">
@@ -893,6 +903,8 @@ function printFicha(id){
       <tr><td class="k">Cor</td><td class="v">${esc(o.cor||"—")}</td><td class="k">Responsável</td><td class="v">${esc(o.responsavel||"—")}</td></tr>
     </table>
 
+    ${o.referencia?`<div class="ft-desenho"><div class="ft-sec">Desenho técnico</div><img src="${esc(o.referencia)}.png" alt="Desenho ${esc(o.referencia)}" style="max-width:100%;display:block;border:1px solid #ccc;margin-top:4px" onerror="this.style.display='none';this.previousElementSibling.style.display='none'"></div>`:""}
+
     ${compSection}
 
     <div class="ft-sec">Grade e quantidades</div>
@@ -911,8 +923,6 @@ function printFicha(id){
 
     <div class="ft-sec">Observações</div>
     <div class="ft-obs">${esc(o.obs||"")}</div>
-
-    ${o.referencia?`<div class="ft-desenho"><div class="ft-sec">Desenho técnico</div><img src="${esc(o.referencia)}.png" alt="Desenho ${esc(o.referencia)}" style="max-width:100%;display:block;border:1px solid #ccc;margin-top:4px" onerror="this.style.display='none';this.previousElementSibling.style.display='none'"></div>`:""}
 
     <div class="ft-foot">
       <div class="ft-sign">Emitido por</div>
