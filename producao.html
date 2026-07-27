@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ellun · Kanban de Produção</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F4EFE4; --creamDeep:#EBE4D4; --paper:#FCFAF4; --sand:#D9CBB0;
+    --line:#DCD2BF; --olive:#5E5F42; --oliveDeep:#43442F; --charcoal:#2A2A26;
+    --gold:#AE8B45; --clay:#9C5636; --mute:#8A8672;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;background:var(--cream);color:var(--charcoal);font-family:'Jost',system-ui,sans-serif;}
+  .serif{font-family:'Cormorant Garamond',Georgia,serif;}
+  header{padding:22px 20px 16px;border-bottom:1px solid var(--line);background:var(--paper);}
+  .wrap{max-width:1440px;margin:0 auto;}
+  .brand{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;letter-spacing:2px;line-height:1;}
+  .brand-sub{font-size:11px;letter-spacing:3px;color:var(--mute);margin-top:3px;text-transform:uppercase;}
+  .head-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+  .head-note{margin-left:auto;font-size:12px;color:var(--mute);letter-spacing:1px;}
+  main{max-width:1440px;margin:0 auto;padding:18px 20px 40px;}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px;}
+  .stat{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:14px 16px;}
+  .stat b{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;line-height:1;color:var(--oliveDeep);display:block;}
+  .stat.warn b{color:var(--clay);}
+  .stat span{font-size:11px;letter-spacing:1px;color:var(--mute);margin-top:6px;text-transform:uppercase;display:block;}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+  input,select,textarea{font-family:inherit;background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:9px 11px;font-size:13px;color:var(--charcoal);}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--olive);outline-offset:1px;}
+  .btn{transition:all .15s ease;cursor:pointer;border:none;}
+  .btn:hover{opacity:.85;}
+  .btn-primary{margin-left:auto;background:var(--oliveDeep);color:var(--cream);border-radius:4px;padding:10px 18px;font-size:13px;letter-spacing:1px;font-weight:500;}
+  .board{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;align-items:flex-start;}
+  .col{flex:0 0 288px;width:288px;background:var(--creamDeep);border-radius:6px;border:1px solid var(--line);display:flex;flex-direction:column;max-height:74vh;}
+  .col-head{padding:12px 14px 10px;border-bottom:1px solid var(--line);}
+  .col-title{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+  .dot{width:8px;height:8px;border-radius:50%;}
+  .col-count{margin-left:auto;font-size:12px;color:var(--mute);text-transform:none;letter-spacing:0;font-weight:400;}
+  .col-units{font-size:11px;color:var(--mute);margin-top:4px;letter-spacing:.5px;}
+  .col-body{padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;flex:1;min-height:60px;}
+  .empty{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--mute);text-align:center;padding:24px 8px;font-style:italic;}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:11px 12px;transition:box-shadow .15s;cursor:grab;}
+  .card:hover{box-shadow:0 6px 20px rgba(42,42,38,.10);}
+  .card.late{border-color:var(--clay);}
+  .card-top{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+  .code{font-size:10.5px;letter-spacing:1px;color:var(--mute);font-weight:600;}
+  .lote-tag{font-size:9px;background:var(--creamDeep);border:1px solid var(--line);border-radius:3px;padding:1px 5px;color:var(--olive);letter-spacing:.3px;}
+  .ref-tag{font-size:9px;background:var(--oliveDeep);color:var(--cream);border-radius:3px;padding:1px 6px;letter-spacing:.5px;font-weight:600;}
+  .prio{margin-left:auto;font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;font-weight:600;}
+  .prod{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;line-height:1.1;margin-bottom:5px;}
+  .meta{font-size:11px;color:var(--olive);letter-spacing:.4px;margin-bottom:8px;}
+  .grade{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;align-items:center;}
+  .gchip{font-size:10px;background:var(--creamDeep);border:1px solid var(--line);border-radius:3px;padding:1px 5px;letter-spacing:.3px;}
+  .gchip b{color:var(--oliveDeep);}
+  .gtotal{font-size:10px;margin-left:auto;color:var(--charcoal);font-weight:600;}
+  .spine{display:flex;gap:3px;margin-bottom:8px;}
+  .spine i{flex:1;height:3px;border-radius:2px;background:var(--line);}
+  .row{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--mute);margin-bottom:6px;}
+  .row .r{margin-left:auto;}
+  .ecom{font-size:10.5px;display:flex;align-items:center;gap:5px;margin-bottom:8px;padding:5px 7px;background:var(--creamDeep);border-radius:4px;letter-spacing:.3px;}
+  .ecom.risk{background:#F3E2DA;color:var(--clay);}
+  .ecom b{color:var(--oliveDeep);}
+  .ecom.risk b{color:var(--clay);}
+  .obs{font-size:10.5px;color:var(--olive);font-style:italic;margin-bottom:9px;line-height:1.3;}
+  .actions{display:flex;align-items:center;gap:6px;border-top:1px solid var(--line);padding-top:8px;}
+  .nav{background:var(--creamDeep);border:1px solid var(--line);border-radius:4px;width:30px;height:26px;font-size:18px;line-height:1;color:var(--oliveDeep);font-weight:600;cursor:pointer;}
+  .nav:disabled{background:transparent;color:var(--line);cursor:default;}
+  .icon{background:transparent;border:1px solid var(--line);border-radius:4px;width:26px;height:26px;font-size:12px;color:var(--olive);cursor:pointer;}
+  .age{font-size:9.5px;color:var(--mute);letter-spacing:.3px;}
+  .sp{margin-left:auto;display:flex;gap:6px;}
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(42,42,38,.42);display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;z-index:50;}
+  .modal{background:var(--paper);border-radius:8px;width:100%;max-width:520px;margin:24px 0;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+  .modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:10px;}
+  .modal-head .t{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;}
+  .modal-head .c{font-size:12px;color:var(--mute);letter-spacing:1px;margin-left:auto;}
+  .modal-body{padding:22px;display:flex;flex-direction:column;gap:14px;}
+  .field label{font-size:11px;letter-spacing:1px;color:var(--mute);text-transform:uppercase;margin-bottom:5px;font-weight:500;display:block;}
+  .field input,.field select,.field textarea{width:100%;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .grade-in{display:flex;gap:8px;}
+  .grade-in>div{flex:1;text-align:center;}
+  .grade-in .s{font-size:10px;color:var(--mute);margin-bottom:3px;font-weight:600;}
+  .grade-in input{width:100%;text-align:center;padding:8px 4px;}
+  .refgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .refgrid .s{font-size:10px;color:var(--mute);margin-bottom:3px;font-weight:600;text-align:center;}
+  .refgrid input{width:100%;text-align:center;padding:6px 2px;}
+  .modal-foot{padding:16px 22px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;}
+  .btn-ghost{background:transparent;border:1px solid var(--line);border-radius:4px;padding:9px 18px;font-size:13px;color:var(--charcoal);}
+  .btn-save{background:var(--oliveDeep);color:var(--cream);border-radius:4px;padding:9px 20px;font-size:13px;font-weight:500;letter-spacing:1px;}
+  .btn-save:disabled{background:var(--sand);cursor:not-allowed;}
+  /* tabs */
+  .tabs{display:flex;gap:4px;margin-bottom:18px;border-bottom:1px solid var(--line);}
+  .tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:9px 16px 11px;font-size:13px;letter-spacing:1px;color:var(--mute);cursor:pointer;font-family:inherit;font-weight:500;text-transform:uppercase;}
+  .tab.active{color:var(--oliveDeep);border-bottom-color:var(--gold);}
+  .mod-intro{font-size:12px;color:var(--mute);margin-bottom:14px;line-height:1.45;max-width:840px;}
+  .btn-sec{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:10px 14px;font-size:12.5px;color:var(--oliveDeep);letter-spacing:.3px;}
+  .seqrow{display:flex;gap:6px;align-items:center;margin-bottom:6px;}
+  .seqrow .seqn{width:20px;text-align:center;font-size:11px;color:var(--mute);flex:0 0 20px;}
+  .seqrow .seqop{flex:1;min-width:0;}
+  .seqrow .seqmaq{width:135px;flex:0 0 135px;}
+  .seqbtn{background:var(--creamDeep);border:1px solid var(--line);border-radius:4px;width:28px;height:32px;cursor:pointer;color:var(--oliveDeep);font-size:13px;flex:0 0 28px;}
+  /* aviamentos */
+  .av-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px;}
+  .av-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--paper);}
+  table.av-table{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5px;}
+  .av-table thead th{background:var(--creamDeep);text-align:left;padding:11px 12px;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--mute);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap;}
+  .av-table td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  .av-table tbody tr:last-child td{border-bottom:none;}
+  .av-table tbody tr:hover{background:var(--cream);}
+  .av-item{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--charcoal);}
+  .av-sub{font-size:10.5px;color:var(--mute);}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .saldo-neg{color:var(--clay);font-weight:600;}
+  .saldo-pos{color:var(--olive);}
+  .badge{display:inline-block;font-size:10px;letter-spacing:.4px;padding:3px 8px;border-radius:20px;white-space:nowrap;font-weight:600;}
+  .badge.ok{background:#E6E9DC;color:var(--oliveDeep);}
+  .badge.buy{background:#F3E2DA;color:var(--clay);}
+  .badge.repor{background:#F3ECD6;color:#8a6d1f;}
+  .badge.transit{background:#E4E0F0;color:#5a4f86;}
+  .av-empty{padding:28px;text-align:center;font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--mute);}
+  .chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--charcoal);}
+  .chk input{width:auto;}
+  /* ficha técnica de produção */
+  .ficha-overlay{position:fixed;inset:0;background:rgba(42,42,38,.5);overflow:auto;z-index:60;padding:20px;}
+  .ficha-toolbar{position:sticky;top:0;display:flex;gap:8px;justify-content:flex-end;max-width:820px;margin:0 auto 12px;}
+  .ficha-toolbar .btn{background:var(--oliveDeep);color:var(--cream);border-radius:4px;padding:9px 16px;font-size:13px;letter-spacing:.5px;}
+  .ficha-toolbar .btn.ghost{background:var(--paper);color:var(--charcoal);border:1px solid var(--line);}
+  .ficha-page{background:#fff;max-width:820px;margin:0 auto;padding:26px 30px;box-shadow:0 10px 40px rgba(0,0,0,.3);color:#1a1a18;font-size:12px;}
+  .ft-head{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid #1a1a18;padding-bottom:10px;margin-bottom:6px;}
+  .ft-brand{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;letter-spacing:2px;}
+  .ft-title{font-size:13px;letter-spacing:1px;text-transform:uppercase;font-weight:600;}
+  .ft-meta{margin-left:auto;font-size:11px;color:#555;text-align:right;}
+  .ft-sec{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;font-weight:600;margin:15px 0 5px;color:#333;border-bottom:1px solid #ccc;padding-bottom:3px;}
+  table.ft{border-collapse:collapse;width:100%;font-size:11px;}
+  table.ft th,table.ft td{border:1px solid #bbb;padding:5px 7px;text-align:left;}
+  table.ft th{background:#eee;font-weight:600;font-size:9.5px;letter-spacing:.3px;text-transform:uppercase;}
+  table.ft td.r,table.ft th.r{text-align:right;}
+  table.ft td.c,table.ft th.c{text-align:center;}
+  table.ft td.empty{text-align:center;color:#999;}
+  table.ft-info td{border:none;padding:3px 6px;font-size:11.5px;}
+  .ft-info .k{color:#666;font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+  .ft-info .v{font-weight:600;padding-right:16px;}
+  .ft-rot td{height:24px;}
+  .ft-obs{border:1px solid #bbb;padding:8px;min-height:32px;font-size:11px;}
+  .ft-foot{margin-top:22px;display:flex;gap:26px;font-size:10.5px;}
+  .ft-sign{flex:1;border-top:1px solid #1a1a18;padding-top:4px;text-align:center;color:#555;}
+  .ft-note{margin-top:14px;font-size:9px;color:#999;text-align:center;letter-spacing:1px;}
+  @media print{
+    body>*:not(#fichaRoot){display:none !important;}
+    #fichaRoot .ficha-overlay{position:static;background:none;padding:0;overflow:visible;}
+    #fichaRoot .ficha-toolbar{display:none;}
+    #fichaRoot .ficha-page{box-shadow:none;max-width:none;margin:0;padding:0;}
+    @page{margin:14mm;}
+  }
+  ::-webkit-scrollbar{height:8px;width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--sand);border-radius:8px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="head-row wrap">
+    <div>
+      <div class="brand">ELLUN</div>
+      <div class="brand-sub">Kanban de Produção</div>
+    </div>
+    <div class="head-note">Fábrica própria · Santa Catarina
+      <button class="btn" id="backupBtn" style="margin-left:10px;background:transparent;border:1px solid var(--line);border-radius:4px;padding:5px 10px;font-size:11px;color:var(--olive);letter-spacing:.5px;cursor:pointer">⬇ Backup</button>
+      <button class="btn" id="restoreBtn" style="margin-left:4px;background:transparent;border:1px solid var(--line);border-radius:4px;padding:5px 10px;font-size:11px;color:var(--olive);letter-spacing:.5px;cursor:pointer">⬆ Restaurar</button>
+      <button class="btn" id="clearBtn" style="margin-left:4px;background:transparent;border:1px solid var(--line);border-radius:4px;padding:5px 10px;font-size:11px;color:var(--olive);letter-spacing:.5px;cursor:pointer">🗑 Limpar OPs</button>
+      <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="tabs">
+    <button class="tab active" data-view="producao">Produção</button>
+    <button class="tab" data-view="estoque">Estoque &amp; Compras</button>
+    <button class="tab" data-view="cadastros">Cadastros</button>
+  </div>
+
+  <div id="view-producao">
+  <div class="metrics" id="metrics"></div>
+
+  <div class="controls">
+    <input id="q" placeholder="Buscar OP, produto, cor…" style="width:210px" />
+    <select id="fColecao"></select>
+    <select id="fPrio"></select>
+    <select id="fLote"></select>
+    <button class="btn btn-primary" id="newBtn">+ Nova OP</button>
+  </div>
+
+  <div class="board" id="board"></div>
+  </div>
+
+  <div id="view-estoque" style="display:none">
+    <div class="mod-intro">Insumos, tecidos e estoque. A necessidade é calculada a partir das OPs abertas; a baixa acontece automaticamente na etapa de consumo.</div>
+    <div class="av-summary" id="avSummary"></div>
+    <div class="controls">
+      <input id="avq" placeholder="Buscar insumo, fornecedor…" style="width:210px" />
+      <select id="avEscopo"></select>
+      <button class="btn btn-primary" id="newAvBtn">+ Novo insumo</button>
+      <button class="btn btn-sec" id="expCompras">⬇ Lista de compras</button>
+      <button class="btn btn-sec" id="expProntas">⬇ OPs prontas p/ Bling</button>
+    </div>
+    <div class="av-table-wrap"><table class="av-table" id="avTable"></table></div>
+  </div>
+
+  <div id="view-cadastros" style="display:none">
+    <div class="mod-intro">Catálogo de referências (modelos). Estes dados alimentam as OPs e as fichas técnicas — inclusive o consumo de tecido, que dá baixa no estoque. Insumos e tecidos em si são gerenciados em Estoque &amp; Compras.</div>
+    <div class="controls">
+      <button class="btn btn-primary" id="newRefBtn">+ Nova referência</button>
+    </div>
+    <div class="av-table-wrap"><table class="av-table" id="refTable"></table></div>
+  </div>
+</main>
+
+<div id="modalRoot"></div>
+<div id="fichaRoot"></div>
+<div id="dialogRoot"></div>
+
+<script>
+/* ---------------- config ---------------- */
+const STAGES=[
+  {key:"ordem",label:"Ordem de Produção"},
+  {key:"corte",label:"Corte"},
+  {key:"costura",label:"Costura"},
+  {key:"acabamento",label:"Acabamento"},
+  {key:"qualidade",label:"Qualidade"},
+  {key:"pronto",label:"Pronto · Estoque"},
+];
+const STAGE_KEYS=STAGES.map(s=>s.key);
+const SIZES=["PP","P","M","G","GG"];
+const PRIOS={Alta:"var(--clay)",Média:"var(--gold)",Baixa:"var(--mute)"};
+const STAGE_COLORS=["var(--mute)","var(--gold)","var(--olive)","var(--oliveDeep)","var(--clay)","var(--oliveDeep)"];
+/* catálogo de referências (modelos). consumoTecido em kg/peça */
+const SEED_REFS={
+  E001:{produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:0.330,tempoTotal:17,sequencia:[
+    {op:"Bainhar bolso inclinado — 2 ag., 2 cm, 2x",maq:"Cobertura"},
+    {op:"Bainhar bolso menor — 2 ag., 2 cm, 2x",maq:"Cobertura"},
+    {op:"Unir bolso inclinado e bolso menor no recorte — 2x",maq:"Reta"},
+    {op:"Unir bolso + costa com forro superior — 2x",maq:"Overloque"},
+    {op:"Pespontar costa superior com bolso — 2x",maq:"Cobertura 2 ag."},
+    {op:"Unir costa pespontada + recorte frente superior com forro — 2x",maq:"Overloque"},
+    {op:"Pespontar recorte frente superior com forro — 2x",maq:"Cobertura 2 ag."},
+    {op:"Unir parte superior + recorte perna inferior — 2x",maq:"Overloque"},
+    {op:"Pespontar recorte perna — 2x",maq:"Cobertura 2 ag."},
+    {op:"Fechar pernas — 2x",maq:"Overloque"},
+    {op:"Fechar gancho",maq:"Overloque"},
+    {op:"Fechar cós",maq:"Overloque"},
+    {op:"Pregar cós em anel, etiqueta centralizada no meio da costa",maq:"Overloque"},
+    {op:"Bainhar barra — 2 ag., 2 cm",maq:"Cobertura"},
+    {op:"Travetar encontro bainha/barra — 2x",maq:"Reta"},
+    {op:"Aplicar plaquinha de metal",maq:"Manual"},
+    {op:"Cortar fio e revisar",maq:"Manual"},
+  ]},
+  E002:{produto:"Shorts com bolso lateral",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:0.220,tempoTotal:8,sequencia:[
+    {op:"Bainhar bolso inclinado — 2 ag., 2 cm, 2x",maq:"Cobertura"},
+    {op:"Bainhar bolso menor — 2 ag., 2 cm, 2x",maq:"Cobertura"},
+    {op:"Unir bolso inclinado e bolso menor no recorte — 2x",maq:"Reta"},
+    {op:"Unir bolso + costa com forro superior — 2x",maq:"Overloque"},
+    {op:"Pespontar costa superior com bolso — 2x",maq:"Cobertura 2 ag."},
+    {op:"Unir costa pespontada + recorte frente superior com forro — 2x",maq:"Overloque"},
+    {op:"Pespontar recorte frente superior com forro — 2x",maq:"Cobertura 2 ag."},
+    {op:"Fechar pernas — 2x",maq:"Overloque"},
+    {op:"Fechar gancho",maq:"Overloque"},
+    {op:"Fechar cós",maq:"Overloque"},
+    {op:"Pregar cós em anel, etiqueta centralizada no meio da costa",maq:"Overloque"},
+    {op:"Bainhar barra — 2 ag., 2 cm",maq:"Cobertura"},
+    {op:"Travetar encontro bainha/barra — 2x",maq:"Reta"},
+    {op:"Aplicar plaquinha de metal",maq:"Manual"},
+    {op:"Cortar fio e revisar",maq:"Manual"},
+  ]},
+  E003:{produto:"Top alça rolotê",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:0.075,tempoTotal:14},
+  E004:{produto:"Top nadador",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.110,tempoTotal:13},
+  E005:{produto:"Legging recorte + bolso traseiro",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.300,tempoTotal:9},
+  E006:{produto:"Top com recorte",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.110,tempoTotal:12,sequencia:[
+    {op:"Fechar ombro forro (frente e costa)",maq:"Overloque"},
+    {op:"Fechar ombro externo (frente e costa)",maq:"Overloque"},
+    {op:"Fechar decote unindo forro e parte externa",maq:"Overloque"},
+    {op:"Fechar cavas embutindo em sanduíche — 2x",maq:"Overloque"},
+    {op:"Fechar laterais com etiqueta na lateral esquerda de quem veste — 2x",maq:"Overloque"},
+    {op:"Fechar lateral unindo as duas partes — 2x",maq:"Reta"},
+    {op:"Fechar cós — 2x",maq:"Overloque"},
+    {op:"Pregar cós em anel",maq:"Overloque"},
+    {op:"Cortar fio e revisar",maq:"Manual"},
+  ]},
+  E007:{produto:"Legging recorte + top",colecao:"Essen",tecido:"Hyper Soft",consumoTecido:0.300,tempoTotal:10},
+};
+const refCodes=()=>Object.keys(state.refs);
+const MAQUINAS=["Reta","Overloque","Cobertura","Cobertura 2 ag.","Galoneira","Travete","Manual"];
+const COMP_TECIDO={"Trend Glam":"82% poliamida · 18% elastano","Hyper Soft":"84% poliamida · 16% elastano"};
+const COMP_FORRO="90% poliamida · 10% elastano";
+
+/* ---------------- date helpers ---------------- */
+const iso=d=>d.toISOString().slice(0,10);
+const today=()=>iso(new Date());
+const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d);};
+const daysBetween=(a,b)=>Math.round((new Date(b)-new Date(a))/86400000);
+const fmtDate=s=>{if(!s)return"—";const p=s.split("-");return p[2]+"/"+p[1];};
+const gradeTotal=g=>SIZES.reduce((t,s)=>t+(Number(g&&g[s])||0),0);
+
+/* ---------------- storage (Claude window.storage OR localStorage) ---------------- */
+const KEY="ellun-kanban-ops-v1";
+const KEY_AV="ellun-aviamentos-v1";
+const KEY_BX="ellun-baixas-v1";
+const KEY_REF="ellun-referencias-v1";
+const store={
+  async get(k){
+    if(window.storage){try{const r=await window.storage.get(k);return r&&r.value?JSON.parse(r.value):null;}catch(e){return null;}}
+    try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}
+  },
+  async set(k,data){
+    const s=JSON.stringify(data);
+    if(window.storage){try{await window.storage.set(k,s);return;}catch(e){}}
+    try{localStorage.setItem(k,s);}catch(e){}
+  }
+};
+
+/* ---------------- seed ---------------- */
+const SEED=[
+  {id:"op-1",codigo:"OP-001",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Oliva",grade:{PP:8,P:22,M:36,G:22,GG:8},prioridade:"Alta",responsavel:"Célula Corte",prazo:addDays(6),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"corte",entradaEtapa:addDays(-2),obs:"Lote de lançamento"},
+  {id:"op-2",codigo:"OP-002",referencia:"E003",produto:"Top alça rolotê",colecao:"Áurea",tecido:"Trend Glam",cor:"Areia",grade:{PP:10,P:20,M:28,G:18,GG:6},prioridade:"Alta",responsavel:"Célula Costura A",prazo:addDays(4),lote:"Lançamento Jul/26",entregaEcom:addDays(10),etapa:"costura",entradaEtapa:addDays(-3),obs:""},
+  {id:"op-3",codigo:"OP-003",referencia:"E005",produto:"Legging recorte + bolso traseiro",colecao:"Essen",tecido:"Hyper Soft",cor:"Grafite",grade:{PP:6,P:18,M:30,G:20,GG:8},prioridade:"Média",responsavel:"Planejamento",prazo:addDays(12),lote:"Reposição 01",entregaEcom:addDays(18),etapa:"ordem",entradaEtapa:today(),obs:"Aguardando liberação de tecido"},
+  {id:"op-4",codigo:"OP-004",referencia:"E007",produto:"Legging recorte + top",colecao:"Essen",tecido:"Hyper Soft",cor:"Creme",grade:{PP:5,P:15,M:22,G:15,GG:5},prioridade:"Média",responsavel:"Acabamento",prazo:addDays(-1),lote:"Lançamento Jul/26",entregaEcom:addDays(3),etapa:"acabamento",entradaEtapa:addDays(-4),obs:"Etiquetas em falta"},
+  {id:"op-5",codigo:"OP-005",referencia:"E004",produto:"Top nadador",colecao:"Essen",tecido:"Hyper Soft",cor:"Ouro suave",grade:{PP:4,P:12,M:16,G:10,GG:4},prioridade:"Baixa",responsavel:"Controle de Qualidade",prazo:addDays(9),lote:"Reposição 01",entregaEcom:addDays(16),etapa:"qualidade",entradaEtapa:addDays(-1),obs:""},
+  {id:"op-6",codigo:"OP-006",referencia:"E001",produto:"Legging recorte + bolso lateral",colecao:"Áurea",tecido:"Trend Glam",cor:"Grafite",grade:{PP:6,P:16,M:24,G:16,GG:6},prioridade:"Alta",responsavel:"Estoque",prazo:addDays(-3),lote:"Lançamento Jul/26",entregaEcom:addDays(1),etapa:"pronto",entradaEtapa:addDays(-1),obs:"Conferido e embalado"},
+];
+
+/* ---------------- seed aviamentos ---------------- */
+const AV_UNITS=["un","m","cone","kg","rolo","par"];
+const AV_APLICA=["Todas","Áurea","Essen"];
+const stageLabel=k=>{const s=STAGES.find(x=>x.key===k);return s?s.label:k;};
+const SEED_AV=[
+  {id:"av-1",item:"Elástico 40mm",fornecedor:"Zanotti",unidade:"m",precoUnit:1.80,consumoPeca:0.95,aplicaA:"Todas",etapaConsumo:"costura",estoque:300,minimo:200,leadTime:15,emTransito:false,obs:"Cintura"},
+  {id:"av-2",item:"Etiqueta tecida (marca Ellun)",fornecedor:"Etiquetas Sul",unidade:"un",precoUnit:0.45,consumoPeca:1,aplicaA:"Todas",etapaConsumo:"costura",estoque:800,minimo:500,leadTime:25,emTransito:false,obs:"Personalizada · lead longo"},
+  {id:"av-3",item:"Etiqueta composição/cuidados",fornecedor:"Etiquetas Sul",unidade:"un",precoUnit:0.20,consumoPeca:1,aplicaA:"Áurea",etapaConsumo:"costura",estoque:150,minimo:300,leadTime:20,emTransito:false,obs:""},
+  {id:"av-4",item:"Etiqueta composição/cuidados",fornecedor:"Etiquetas Sul",unidade:"un",precoUnit:0.20,consumoPeca:1,aplicaA:"Essen",etapaConsumo:"costura",estoque:500,minimo:300,leadTime:20,emTransito:false,obs:""},
+  {id:"av-5",item:"Hangtag premium + cordão",fornecedor:"Gráfica Aurora",unidade:"un",precoUnit:1.20,consumoPeca:1,aplicaA:"Todas",etapaConsumo:"acabamento",estoque:400,minimo:300,leadTime:18,emTransito:false,obs:""},
+  {id:"av-6",item:"Linha resistente (cone 5000m)",fornecedor:"Coats",unidade:"cone",precoUnit:9.00,consumoPeca:0.015,aplicaA:"Todas",etapaConsumo:"costura",estoque:30,minimo:15,leadTime:7,emTransito:false,obs:""},
+  {id:"av-7",item:"Embalagem premium",fornecedor:"Pack Ideal",unidade:"un",precoUnit:1.50,consumoPeca:1,aplicaA:"Todas",etapaConsumo:"acabamento",estoque:250,minimo:300,leadTime:12,emTransito:true,obs:"Pedido feito"},
+  {id:"av-8",item:"Tecido Trend Glam",tipo:"tecido",fornecedor:"Malharia Fio Nobre",unidade:"kg",precoUnit:62.00,consumoPeca:0,aplicaA:"Áurea",etapaConsumo:"corte",estoque:150,minimo:80,leadTime:20,emTransito:false,obs:"Coleção Áurea"},
+  {id:"av-9",item:"Tecido Hyper Soft",tipo:"tecido",fornecedor:"Malharia Fio Nobre",unidade:"kg",precoUnit:58.00,consumoPeca:0,aplicaA:"Essen",etapaConsumo:"corte",estoque:100,minimo:60,leadTime:20,emTransito:false,obs:"Coleção Essen"},
+];
+
+/* ---------------- state ---------------- */
+let state={ops:[],aviamentos:[],refs:{},baixas:{},q:"",fColecao:"Todas",fPrio:"Todas",fLote:"Todos",avq:"",avEscopo:"Todos",drag:null};
+
+async function init(){
+  const saved=await store.get(KEY);
+  state.ops=saved||SEED;
+  const savedAv=await store.get(KEY_AV);
+  state.aviamentos=savedAv||SEED_AV;
+  const savedRef=await store.get(KEY_REF);
+  state.refs=savedRef||JSON.parse(JSON.stringify(SEED_REFS));
+  const savedBx=await store.get(KEY_BX);
+  if(savedBx){
+    state.baixas=savedBx;
+  }else{
+    /* baseline: registra as OPs que já cruzaram a etapa de consumo SEM debitar,
+       assumindo que o estoque cadastrado já é o físico atual */
+    state.baixas={};
+    const idx=k=>STAGE_KEYS.indexOf(k);
+    state.ops.forEach(o=>state.aviamentos.forEach(av=>{
+      if(avMatch(av.aplicaA,o)&&idx(o.etapa)>=idx(av.etapaConsumo||"costura"))
+        state.baixas[o.id+"|"+av.id]={amount:avBaixa(av,o)};
+    }));
+    persistBx();
+  }
+  buildFilters();
+  document.getElementById("q").addEventListener("input",e=>{state.q=e.target.value;render();});
+  document.getElementById("fColecao").addEventListener("change",e=>{state.fColecao=e.target.value;render();});
+  document.getElementById("fPrio").addEventListener("change",e=>{state.fPrio=e.target.value;render();});
+  document.getElementById("fLote").addEventListener("change",e=>{state.fLote=e.target.value;render();});
+  document.getElementById("newBtn").addEventListener("click",()=>openModal("new"));
+  document.getElementById("avq").addEventListener("input",e=>{state.avq=e.target.value;renderAviamentos();});
+  document.getElementById("avEscopo").addEventListener("change",e=>{state.avEscopo=e.target.value;renderAviamentos();});
+  document.getElementById("newAvBtn").addEventListener("click",()=>openAvModal("new"));
+  document.getElementById("newRefBtn").addEventListener("click",()=>openRefModal("new"));
+  document.getElementById("expCompras").addEventListener("click",exportCompras);
+  document.getElementById("expProntas").addEventListener("click",exportProntas);
+  document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>switchView(t.dataset.view)));
+  document.getElementById("clearBtn").addEventListener("click",limparOps);
+  document.getElementById("backupBtn").addEventListener("click",exportBackup);
+  document.getElementById("restoreBtn").addEventListener("click",()=>document.getElementById("importFile").click());
+  document.getElementById("importFile").addEventListener("change",e=>{if(e.target.files&&e.target.files[0]){importBackup(e.target.files[0]);e.target.value="";}});
+  reconcile();
+  render();
+}
+function persistRef(){store.set(KEY_REF,state.refs);}
+
+function limparOps(){
+  uiConfirm("Limpar TODAS as OPs do quadro?\n\nSuas referências, insumos e tecidos são mantidos. Esta ação não pode ser desfeita.",()=>{
+    state.ops=[];
+    reconcile();
+    persist();
+    buildFilters();render();
+  });
+}
+
+/* Baixa automática na etapa de consumo. Debita o estoque quando a OP entra
+   (ou passa) da etapa de consumo do aviamento; credita de volta se a OP recua.
+   Registra por par OP×aviamento para nunca debitar em duplicidade. */
+function reconcile(){
+  const idx=k=>STAGE_KEYS.indexOf(k);
+  const opIds=new Set(state.ops.map(o=>o.id));
+  const avIds=new Set(state.aviamentos.map(a=>a.id));
+  /* limpa registros de OPs/aviamentos que não existem mais (credita de volta se possível) */
+  Object.keys(state.baixas).forEach(key=>{
+    const[opId,avId]=key.split("|");
+    if(!opIds.has(opId)||!avIds.has(avId)){
+      const av=state.aviamentos.find(a=>a.id===avId);
+      if(av)av.estoque=(Number(av.estoque)||0)+state.baixas[key].amount;
+      delete state.baixas[key];
+    }
+  });
+  state.ops.forEach(o=>state.aviamentos.forEach(av=>{
+    const key=o.id+"|"+av.id;
+    const rec=state.baixas[key]?state.baixas[key].amount:0;
+    const aplica=avMatch(av.aplicaA,o);
+    const crossed=aplica&&idx(o.etapa)>=idx(av.etapaConsumo||"costura");
+    const target=crossed?avBaixa(av,o):0;
+    if(target!==rec){
+      av.estoque=(Number(av.estoque)||0)-(target-rec);
+      if(target>0)state.baixas[key]={amount:target};
+      else delete state.baixas[key];
+    }
+  }));
+  persistAv();persistBx();
+}
+
+function switchView(v){
+  ["producao","estoque","cadastros"].forEach(k=>{
+    const el=document.getElementById("view-"+k);
+    if(el)el.style.display=(k===v)?"":"none";
+  });
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.view===v));
+  if(v==="estoque")renderAviamentos();
+  if(v==="cadastros")renderCadastros();
+}
+
+function renderCadastros(){
+  const t=document.getElementById("refTable");
+  if(!t)return;
+  const head=`<thead><tr><th>Código</th><th>Produto</th><th>Coleção</th><th>Tecido</th><th class="num">Consumo tecido</th><th>Composição</th><th class="num">Tempo/peça</th><th class="num">Operações</th><th></th></tr></thead>`;
+  const codes=refCodes();
+  const body=codes.length?codes.map(c=>{
+    const r=state.refs[c];
+    const comp=COMP_TECIDO[r.tecido]||"—";
+    const ops=r.sequencia&&r.sequencia.length?r.sequencia.length+" ops":"—";
+    return `<tr>
+      <td><span class="ref-tag">${esc(c)}</span></td>
+      <td class="av-item">${esc(r.produto)}</td>
+      <td>${esc(r.colecao)}</td>
+      <td>${esc(r.tecido)}</td>
+      <td class="num">${r.consumoTecido!=null?Number(r.consumoTecido).toLocaleString("pt-BR",{maximumFractionDigits:3})+" kg":"—"}</td>
+      <td>${comp}</td>
+      <td class="num">${r.tempoTotal?r.tempoTotal+" min":"—"}</td>
+      <td class="num">${ops}</td>
+      <td class="num"><button class="icon" data-refact="edit" data-id="${esc(c)}">✎</button> <button class="icon" data-refact="del" data-id="${esc(c)}">✕</button></td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="9" class="av-empty">Nenhuma referência cadastrada</td></tr>`;
+  t.innerHTML=head+"<tbody>"+body+"</tbody>";
+  t.querySelectorAll("[data-refact]").forEach(b=>b.addEventListener("click",()=>{
+    if(b.dataset.refact==="edit")openRefModal("edit",b.dataset.id);
+    else removeRef(b.dataset.id);
+  }));
+}
+
+function removeRef(code){
+  const inUse=state.ops.some(o=>o.referencia===code);
+  uiConfirm("Excluir a referência "+code+"?"+(inUse?"\n\nHá OPs usando esta referência — elas manterão o código, mas ficarão sem os dados de catálogo (consumo de tecido, sequência).":""),()=>{
+    delete state.refs[code];
+    persistRef();reconcile();renderCadastros();render();
+  });
+}
+
+function openRefModal(mode,code){
+  const r=mode==="edit"?state.refs[code]:null;
+  const f=r?JSON.parse(JSON.stringify(r)):{produto:"",colecao:"Áurea",tecido:"Trend Glam",consumoTecido:"",tempoTotal:"",sequencia:[]};
+  const seqEdit=Array.isArray(f.sequencia)?f.sequencia.map(s=>({op:s.op||"",maq:s.maq||""})):[];
+  const opt=(arr,v)=>arr.map(x=>`<option ${x===v?"selected":""}>${x}</option>`).join("");
+  document.getElementById("modalRoot").innerHTML=`
+  <div class="overlay" id="refOv"><div class="modal">
+    <div class="modal-head"><span class="t">${mode==="new"?"Nova referência":"Editar referência"}</span><span class="c">${mode==="edit"?esc(code):""}</span></div>
+    <div class="modal-body">
+      <div class="g2">
+        <div class="field"><label>Código</label>${mode==="edit"?`<input value="${esc(code)}" disabled>`:`<input id="r_cod" placeholder="Ex.: E008">`}</div>
+        <div class="field"><label>Coleção</label><select id="r_col">${opt(["Áurea","Essen"],f.colecao)}</select></div>
+      </div>
+      <div class="field"><label>Produto</label><input id="r_prod" value="${esc(f.produto)}" placeholder="Ex.: Legging recorte + bolso"></div>
+      <div class="g2">
+        <div class="field"><label>Tecido</label><input id="r_tec" value="${esc(f.tecido)}" placeholder="Trend Glam / Hyper Soft" list="tecList"><datalist id="tecList"><option>Trend Glam</option><option>Hyper Soft</option></datalist></div>
+        <div class="field"><label>Consumo de tecido (kg/peça)</label><input type="number" step="0.001" min="0" id="r_cons" value="${f.consumoTecido}"></div>
+      </div>
+      <div class="field"><label>Tempo por peça (min)</label><input type="number" step="0.1" min="0" id="r_tempo" value="${f.tempoTotal}"></div>
+      <div class="field"><label>Sequência operacional</label>
+        <div id="refSeq"></div>
+        <button class="btn" id="seqAdd" style="margin-top:8px;background:var(--creamDeep);border:1px solid var(--line);border-radius:4px;padding:7px 12px;font-size:12px;color:var(--oliveDeep);letter-spacing:.3px">+ Adicionar operação</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="refCancel">Cancelar</button>
+      <button class="btn btn-save" id="refSave">${mode==="new"?"Criar":"Salvar"}</button>
+    </div>
+  </div></div>`;
+
+  const cont=document.getElementById("refSeq");
+  function renderSeq(){
+    cont.innerHTML=seqEdit.length?seqEdit.map((s,i)=>`
+      <div class="seqrow">
+        <span class="seqn">${i+1}</span>
+        <input class="seqop" data-i="${i}" value="${esc(s.op)}" placeholder="Operação">
+        <select class="seqmaq" data-i="${i}">${["",...MAQUINAS].map(m=>`<option value="${m}" ${s.maq===m?"selected":""}>${m||"— máquina —"}</option>`).join("")}</select>
+        <button class="seqbtn" data-up="${i}" title="Subir">↑</button>
+        <button class="seqbtn" data-dn="${i}" title="Descer">↓</button>
+        <button class="seqbtn" data-rm="${i}" title="Remover">✕</button>
+      </div>`).join(""):`<div class="av-sub" style="padding:4px 0">Nenhuma operação. Clique em "Adicionar operação".</div>`;
+    cont.querySelectorAll(".seqop").forEach(el=>el.addEventListener("input",()=>{seqEdit[+el.dataset.i].op=el.value;}));
+    cont.querySelectorAll(".seqmaq").forEach(el=>el.addEventListener("change",()=>{seqEdit[+el.dataset.i].maq=el.value;}));
+    cont.querySelectorAll("[data-up]").forEach(b=>b.addEventListener("click",()=>{const i=+b.dataset.up;if(i>0){[seqEdit[i-1],seqEdit[i]]=[seqEdit[i],seqEdit[i-1]];renderSeq();}}));
+    cont.querySelectorAll("[data-dn]").forEach(b=>b.addEventListener("click",()=>{const i=+b.dataset.dn;if(i<seqEdit.length-1){[seqEdit[i+1],seqEdit[i]]=[seqEdit[i],seqEdit[i+1]];renderSeq();}}));
+    cont.querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click",()=>{seqEdit.splice(+b.dataset.rm,1);renderSeq();}));
+  }
+  renderSeq();
+  document.getElementById("seqAdd").addEventListener("click",()=>{seqEdit.push({op:"",maq:""});renderSeq();const ins=cont.querySelectorAll(".seqop");if(ins.length)ins[ins.length-1].focus();});
+  document.getElementById("refCancel").addEventListener("click",closeModal);
+  document.getElementById("refOv").addEventListener("click",e=>{if(e.target.id==="refOv")closeModal();});
+  document.getElementById("refSave").addEventListener("click",()=>{
+    const cod=mode==="edit"?code:document.getElementById("r_cod").value.trim().toUpperCase();
+    if(!cod){uiAlert("Informe o código da referência.");return;}
+    if(mode==="new"&&state.refs[cod]){uiAlert("Já existe uma referência com o código "+cod+".");return;}
+    const prod=document.getElementById("r_prod").value.trim();
+    if(!prod){uiAlert("Informe o produto.");return;}
+    const seq=seqEdit.filter(s=>s.op.trim()).map(s=>({op:s.op.trim(),maq:s.maq||""}));
+    const data={
+      produto:prod,
+      colecao:document.getElementById("r_col").value,
+      tecido:document.getElementById("r_tec").value.trim(),
+      consumoTecido:Number(document.getElementById("r_cons").value)||0,
+      tempoTotal:Number(document.getElementById("r_tempo").value)||0,
+    };
+    state.refs[cod]={...(state.refs[cod]||{}),...data};
+    if(seq.length)state.refs[cod].sequencia=seq; else delete state.refs[cod].sequencia;
+    persistRef();reconcile();closeModal();renderCadastros();render();
+  });
+}
+
+function persist(){store.set(KEY,state.ops);}
+function persistAv(){store.set(KEY_AV,state.aviamentos);}
+function persistBx(){store.set(KEY_BX,state.baixas);}
+
+function buildFilters(){
+  fill("fColecao",["Todas","Áurea","Essen"],state.fColecao,"Coleção");
+  fill("fPrio",["Todas","Alta","Média","Baixa"],state.fPrio,"Prioridade");
+  const lotes=["Todos",...Array.from(new Set(state.ops.map(o=>o.lote).filter(Boolean)))];
+  if(!lotes.includes(state.fLote))state.fLote="Todos";
+  fill("fLote",lotes,state.fLote,"Lote");
+  buildAvEscopo();
+}
+function buildAvEscopo(){
+  const sel=document.getElementById("avEscopo");
+  if(!sel)return;
+  const lotes=Array.from(new Set(state.ops.map(o=>o.lote).filter(Boolean)));
+  if(state.avEscopo!=="Todos"&&!lotes.includes(state.avEscopo))state.avEscopo="Todos";
+  sel.innerHTML=`<option value="Todos" ${state.avEscopo==="Todos"?"selected":""}>Necessidade: todas as OPs abertas</option>`+
+    lotes.map(l=>`<option value="${esc(l)}" ${state.avEscopo===l?"selected":""}>Necessidade do lote: ${esc(l)}</option>`).join("");
+}
+function fill(id,opts,val,label){
+  const sel=document.getElementById(id);
+  sel.innerHTML=opts.map(o=>{
+    const txt=(o==="Todas"||o==="Todos")?label+": "+o.toLowerCase():o;
+    return `<option value="${o}" ${o===val?"selected":""}>${txt}</option>`;
+  }).join("");
+}
+
+/* ---------------- logic ---------------- */
+const nextCode=()=>{
+  const nums=state.ops.map(o=>parseInt(String(o.codigo).replace(/\D/g,""),10)).filter(n=>!isNaN(n));
+  const n=(nums.length?Math.max(...nums):0)+1;
+  return "OP-"+String(n).padStart(3,"0");
+};
+const isLate=o=>o.etapa!=="pronto"&&o.prazo&&daysBetween(o.prazo,today())>0;
+const ecomRisk=o=>o.etapa!=="pronto"&&o.entregaEcom&&daysBetween(o.entregaEcom,today())>=0;
+
+function filtered(){
+  return state.ops.filter(o=>{
+    if(state.fColecao!=="Todas"&&o.colecao!==state.fColecao)return false;
+    if(state.fPrio!=="Todas"&&o.prioridade!==state.fPrio)return false;
+    if(state.fLote!=="Todos"&&o.lote!==state.fLote)return false;
+    if(state.q.trim()){
+      const t=((o.produto||"")+(o.codigo||"")+(o.cor||"")+(o.responsavel||"")+(o.lote||"")).toLowerCase();
+      if(!t.includes(state.q.trim().toLowerCase()))return false;
+    }
+    return true;
+  });
+}
+
+function move(id,dir){
+  state.ops=state.ops.map(o=>{
+    if(o.id!==id)return o;
+    const i=STAGE_KEYS.indexOf(o.etapa);
+    const j=Math.min(STAGE_KEYS.length-1,Math.max(0,i+dir));
+    if(i===j)return o;
+    return {...o,etapa:STAGE_KEYS[j],entradaEtapa:today()};
+  });
+  persist();reconcile();render();
+}
+function moveTo(id,etapa){
+  state.ops=state.ops.map(o=>o.id===id&&o.etapa!==etapa?{...o,etapa,entradaEtapa:today()}:o);
+  persist();reconcile();render();
+}
+function removeOp(id){
+  const o=state.ops.find(x=>x.id===id);
+  uiConfirm("Excluir a OP "+(o?o.codigo:"")+"?",()=>{
+    state.ops=state.ops.filter(x=>x.id!==id);
+    persist();reconcile();buildFilters();render();
+  });
+}
+
+/* ---------------- render ---------------- */
+function render(){
+  const list=filtered();
+  const emProd=list.filter(o=>o.etapa!=="pronto");
+  const unid=emProd.reduce((t,o)=>t+gradeTotal(o.grade),0);
+  const atrasadas=list.filter(isLate).length;
+  const concluidas=list.filter(o=>o.etapa==="pronto").length;
+  const proxima=list.filter(o=>o.etapa!=="pronto"&&o.entregaEcom).sort((a,b)=>a.entregaEcom<b.entregaEcom?-1:1)[0];
+
+  const stats=[
+    {n:emProd.length,l:"OPs em produção"},
+    {n:unid.toLocaleString("pt-BR"),l:"Unidades em linha"},
+    {n:atrasadas,l:"OPs atrasadas",warn:atrasadas>0},
+    {n:concluidas,l:"Prontas · estoque"},
+    {n:proxima?fmtDate(proxima.entregaEcom):"—",l:"Próx. entrega e-com"},
+  ];
+  document.getElementById("metrics").innerHTML=stats.map(s=>
+    `<div class="stat ${s.warn?"warn":""}"><b>${s.n}</b><span>${s.l}</span></div>`).join("");
+
+  const board=document.getElementById("board");
+  board.innerHTML=STAGES.map((stage,si)=>{
+    const items=list.filter(o=>o.etapa===stage.key);
+    const units=items.reduce((t,o)=>t+gradeTotal(o.grade),0);
+    return `<div class="col" data-stage="${stage.key}">
+      <div class="col-head">
+        <div class="col-title"><span class="dot" style="background:${STAGE_COLORS[si]}"></span>${stage.label}<span class="col-count">${items.length}</span></div>
+        <div class="col-units">${units.toLocaleString("pt-BR")} un.</div>
+      </div>
+      <div class="col-body">
+        ${items.length?items.map(o=>cardHTML(o,si)).join(""):'<div class="empty">Sem ordens nesta etapa</div>'}
+      </div>
+    </div>`;
+  }).join("");
+
+  attachBoard();
+  renderAviamentos();
+}
+
+function cardHTML(o,si){
+  const total=gradeTotal(o.grade);
+  const dias=daysBetween(o.entradaEtapa,today());
+  const late=isLate(o);
+  const risk=ecomRisk(o);
+  const chips=SIZES.map(s=>{const v=Number(o.grade&&o.grade[s])||0;return v?`<span class="gchip"><b>${s}</b> ${v}</span>`:"";}).join("");
+  const spine=STAGES.map((_,k)=>`<i style="background:${k<=si?STAGE_COLORS[si]:"var(--line)"}"></i>`).join("");
+  return `<div class="card ${late?"late":""}" draggable="true" data-id="${o.id}">
+    <div class="card-top">
+      <span class="code">${o.codigo}</span>
+      ${o.referencia?`<span class="ref-tag">${esc(o.referencia)}</span>`:""}
+      ${o.lote?`<span class="lote-tag">${esc(o.lote)}</span>`:""}
+      <span class="prio" style="color:${PRIOS[o.prioridade]}">${o.prioridade}</span>
+    </div>
+    <div class="prod">${esc(o.produto)}</div>
+    <div class="meta">${esc(o.colecao)} · ${esc(o.tecido)} · ${esc(o.cor)}</div>
+    <div class="grade">${chips}<span class="gtotal">${total} un.</span></div>
+    <div class="spine">${spine}</div>
+    <div class="row">
+      <span>👤 ${esc(o.responsavel||"—")}</span>
+      <span class="r" style="color:${late?"var(--clay)":"var(--mute)"};font-weight:${late?"600":"400"}">${late?"Atrasada · ":"Prazo "}${fmtDate(o.prazo)}</span>
+    </div>
+    <div class="ecom ${risk?"risk":""}">📦 Entrega e-commerce: <b>${fmtDate(o.entregaEcom)}</b>${risk?" · em risco":""}</div>
+    ${o.obs?`<div class="obs">${esc(o.obs)}</div>`:""}
+    <div class="actions">
+      <button class="nav" data-act="back" ${si===0?"disabled":""}>‹</button>
+      <span class="age">${dias===0?"hoje":dias+"d na etapa"}</span>
+      <div class="sp">
+        <button class="icon" data-act="ficha" title="Ficha técnica / imprimir">🖨</button>
+        <button class="icon" data-act="edit" title="Editar">✎</button>
+        <button class="icon" data-act="del" title="Excluir">✕</button>
+      </div>
+      <button class="nav" data-act="fwd" ${si===STAGES.length-1?"disabled":""}>›</button>
+    </div>
+  </div>`;
+}
+
+function attachBoard(){
+  const board=document.getElementById("board");
+  board.querySelectorAll(".card").forEach(card=>{
+    const id=card.dataset.id;
+    card.addEventListener("dragstart",()=>{state.drag=id;});
+    card.addEventListener("dragend",()=>{state.drag=null;});
+    card.querySelectorAll("[data-act]").forEach(b=>{
+      b.addEventListener("click",e=>{
+        e.stopPropagation();
+        const a=b.dataset.act;
+        if(a==="back")move(id,-1);
+        else if(a==="fwd")move(id,1);
+        else if(a==="edit")openModal("edit",id);
+        else if(a==="ficha")printFicha(id);
+        else if(a==="del")removeOp(id);
+      });
+    });
+  });
+  board.querySelectorAll(".col").forEach(col=>{
+    col.addEventListener("dragover",e=>e.preventDefault());
+    col.addEventListener("drop",()=>{if(state.drag)moveTo(state.drag,col.dataset.stage);});
+  });
+}
+
+/* ---------------- modal ---------------- */
+function openModal(mode,id){
+  const op=mode==="edit"?state.ops.find(o=>o.id===id):null;
+  const f=op||{referencia:"",produto:"",colecao:"Áurea",tecido:"Trend Glam",cor:"",grade:{PP:0,P:0,M:0,G:0,GG:0},prioridade:"Média",responsavel:"",prazo:"",lote:"",entregaEcom:"",obs:""};
+  const code=mode==="new"?nextCode():op.codigo;
+  const opt=(arr,v)=>arr.map(x=>`<option ${x===v?"selected":""}>${x}</option>`).join("");
+  const gin=SIZES.map(s=>`<div><div class="s">${s}</div><input type="number" min="0" id="g_${s}" value="${(f.grade&&f.grade[s])||""}"></div>`).join("");
+
+  document.getElementById("modalRoot").innerHTML=`
+  <div class="overlay" id="ov">
+    <div class="modal" id="md">
+      <div class="modal-head">
+        <span class="t">${mode==="new"?"Nova Ordem de Produção":"Editar OP"}</span>
+        <span class="c">${code}</span>
+      </div>
+      <div class="modal-body">
+        <div class="g2">
+          <div class="field"><label>Referência</label><select id="m_ref"><option value="">— selecione —</option>${refCodes().map(c=>`<option value="${c}" ${f.referencia===c?"selected":""}>${c} · ${esc(state.refs[c].produto)}</option>`).join("")}</select></div>
+          <div class="field"><label>Produto</label><input id="m_produto" value="${esc(f.produto)}" placeholder="Preenche pela referência"></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label>Coleção</label><select id="m_colecao">${opt(["Áurea","Essen"],f.colecao)}</select></div>
+          <div class="field"><label>Tecido</label><select id="m_tecido">${opt(["Trend Glam","Hyper Soft"],f.tecido)}</select></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label>Cor</label><input id="m_cor" value="${esc(f.cor)}" placeholder="Oliva, Areia…"></div>
+          <div class="field"><label>Prioridade</label><select id="m_prio">${opt(["Alta","Média","Baixa"],f.prioridade)}</select></div>
+        </div>
+        <div class="field"><label>Grade de tamanhos <span id="gtot" style="color:var(--olive)"></span></label><div class="grade-in">${gin}</div></div>
+        <div class="g2">
+          <div class="field"><label>Lote</label><input id="m_lote" value="${esc(f.lote||"")}" placeholder="Ex.: Lançamento Jul/26"></div>
+          <div class="field"><label>Entrega ao e-commerce</label><input type="date" id="m_ecom" value="${f.entregaEcom||""}"></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label>Responsável</label><input id="m_resp" value="${esc(f.responsavel)}" placeholder="Célula / setor"></div>
+          <div class="field"><label>Prazo interno</label><input type="date" id="m_prazo" value="${f.prazo||""}"></div>
+        </div>
+        <div class="field"><label>Observações</label><textarea id="m_obs" rows="2" placeholder="Notas de produção, pendências…">${esc(f.obs)}</textarea></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="cancelBtn">Cancelar</button>
+        <button class="btn btn-save" id="saveBtn">${mode==="new"?"Criar OP":"Salvar"}</button>
+      </div>
+    </div>
+  </div>`;
+
+  const updTot=()=>{let t=0;SIZES.forEach(s=>t+=Number(document.getElementById("g_"+s).value)||0);document.getElementById("gtot").textContent="· "+t+" un.";document.getElementById("saveBtn").disabled=!(document.getElementById("m_produto").value.trim()&&t>0);};
+  SIZES.forEach(s=>document.getElementById("g_"+s).addEventListener("input",updTot));
+  document.getElementById("m_produto").addEventListener("input",updTot);
+  updTot();
+
+  const refSel=document.getElementById("m_ref");
+  refSel.addEventListener("change",()=>{
+    const r=state.refs[refSel.value];
+    if(r){
+      document.getElementById("m_produto").value=r.produto;
+      document.getElementById("m_colecao").value=r.colecao;
+      document.getElementById("m_tecido").value=r.tecido;
+      updTot();
+    }
+  });
+
+  document.getElementById("ov").addEventListener("click",e=>{if(e.target.id==="ov")closeModal();});
+  document.getElementById("cancelBtn").addEventListener("click",closeModal);
+  document.getElementById("saveBtn").addEventListener("click",()=>{
+    const grade={};SIZES.forEach(s=>grade[s]=Number(document.getElementById("g_"+s).value)||0);
+    const data={
+      referencia:document.getElementById("m_ref").value,
+      produto:document.getElementById("m_produto").value.trim(),
+      colecao:document.getElementById("m_colecao").value,
+      tecido:document.getElementById("m_tecido").value,
+      cor:document.getElementById("m_cor").value.trim(),
+      prioridade:document.getElementById("m_prio").value,
+      grade,
+      lote:document.getElementById("m_lote").value.trim(),
+      entregaEcom:document.getElementById("m_ecom").value,
+      responsavel:document.getElementById("m_resp").value.trim(),
+      prazo:document.getElementById("m_prazo").value,
+      obs:document.getElementById("m_obs").value.trim(),
+    };
+    if(mode==="new"){
+      state.ops.push({...data,id:"op-"+Date.now(),codigo:nextCode(),etapa:"ordem",entradaEtapa:today()});
+    }else{
+      state.ops=state.ops.map(o=>o.id===id?{...o,...data}:o);
+    }
+    persist();reconcile();buildFilters();closeModal();render();
+  });
+}
+function closeModal(){document.getElementById("modalRoot").innerHTML="";}
+
+/* diálogos próprios (o confirm/alert nativos são bloqueados em visualizadores incorporados) */
+function uiConfirm(msg,onYes){
+  const root=document.getElementById("dialogRoot");
+  root.innerHTML=`<div class="overlay" id="cfOv" style="z-index:70"><div class="modal" style="max-width:430px">
+    <div class="modal-body"><div style="font-size:14px;line-height:1.5;white-space:pre-line">${esc(msg)}</div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="cfNo">Cancelar</button><button class="btn btn-save" id="cfYes">Confirmar</button></div>
+  </div></div>`;
+  const close=()=>{root.innerHTML="";};
+  document.getElementById("cfNo").addEventListener("click",close);
+  document.getElementById("cfOv").addEventListener("click",e=>{if(e.target.id==="cfOv")close();});
+  document.getElementById("cfYes").addEventListener("click",()=>{close();onYes&&onYes();});
+}
+function uiAlert(msg){
+  const root=document.getElementById("dialogRoot");
+  root.innerHTML=`<div class="overlay" id="alOv" style="z-index:70"><div class="modal" style="max-width:430px">
+    <div class="modal-body"><div style="font-size:14px;line-height:1.5;white-space:pre-line">${esc(msg)}</div></div>
+    <div class="modal-foot"><button class="btn btn-save" id="alOk">OK</button></div>
+  </div></div>`;
+  const close=()=>{root.innerHTML="";};
+  document.getElementById("alOk").addEventListener("click",close);
+  document.getElementById("alOv").addEventListener("click",e=>{if(e.target.id==="alOv")close();});
+}
+
+/* ---------------- ficha técnica de produção ---------------- */
+function printFicha(id){
+  const o=state.ops.find(x=>x.id===id);if(!o)return;
+  const total=gradeTotal(o.grade);
+  const n3=v=>Number(v||0).toLocaleString("pt-BR",{maximumFractionDigits:3});
+  const ref=(o.referencia&&state.refs[o.referencia])?state.refs[o.referencia]:null;
+  const applic=state.aviamentos.filter(av=>avMatch(av.aplicaA,o));
+  const tecidos=applic.filter(av=>av.tipo==="tecido");
+  const aviam=applic.filter(av=>av.tipo!=="tecido");
+
+  const matRow=av=>`<tr><td>${esc(av.item)}${av.tamanho?" · tam "+esc(av.tamanho):""}</td><td class="c">${esc(av.unidade||"")}</td><td class="r">${n3(avConsumo(av,o))}</td><td class="r">${n3(avBaixa(av,o))}</td></tr>`;
+  const texRows=tecidos.length?tecidos.map(matRow).join(""):`<tr><td colspan="4" class="empty">—</td></tr>`;
+  const aviRows=aviam.length?aviam.map(matRow).join(""):`<tr><td colspan="4" class="empty">—</td></tr>`;
+  const gradeHead=SIZES.map(s=>`<th class="c">${s}</th>`).join("");
+  const gradeVals=SIZES.map(s=>`<td class="c">${(o.grade&&o.grade[s])||0}</td>`).join("");
+  const rotRows=STAGES.map(st=>`<tr><td>${st.label}</td><td></td><td></td><td></td><td></td></tr>`).join("");
+  const nMin=v=>Number(v||0).toLocaleString("pt-BR",{maximumFractionDigits:1});
+  const seq=ref&&ref.sequencia?ref.sequencia:null;
+  const tPeca=ref&&ref.tempoTotal?ref.tempoTotal:null;
+  let tResumo="";
+  if(tPeca){
+    const totMin=tPeca*total, h=Math.floor(totMin/60), mn=Math.round(totMin%60);
+    tResumo=`${nMin(tPeca)} min/peça · tempo do lote ≈ ${h>0?h+"h ":""}${mn}min (${total} pç)`;
+  }
+  const seqRows=seq?seq.map((s,i)=>`<tr><td class="c">${i+1}</td><td>${esc(s.op)}</td><td>${esc(s.maq||"—")}</td><td></td></tr>`).join(""):"";
+  const seqSection=seq
+    ? `<div class="ft-sec">Sequência operacional${tResumo?" — "+tResumo:""}</div>
+       <table class="ft"><tr><th class="c">Nº</th><th>Operação</th><th>Máquina</th><th class="c">Visto</th></tr>${seqRows}</table>`
+    : `<div class="ft-sec">Sequência operacional${tPeca?" — "+tResumo:""}</div>
+       <div class="ft-obs">Sequência não cadastrada para esta referência.</div>`;
+  const compExterna=COMP_TECIDO[o.tecido]||"—";
+  const compSection=`<div class="ft-sec">Composição</div>
+    <table class="ft"><tr><th>Parte da peça</th><th>Tecido</th><th>Composição</th></tr>
+      <tr><td>Parte externa</td><td>${esc(o.tecido||"—")}</td><td>${compExterna}</td></tr>
+      <tr><td>Forro</td><td>Acqua Light</td><td>${COMP_FORRO}</td></tr>
+    </table>`;
+
+  const page=`
+    <div class="ft-head">
+      <div class="ft-brand">ELLUN</div>
+      <div class="ft-title">Ficha Técnica de Produção</div>
+      <div class="ft-meta"><b>${esc(o.codigo)}</b><br>Emissão: ${fmtDate(today())}</div>
+    </div>
+    <table class="ft ft-info">
+      <tr><td class="k">Referência</td><td class="v">${esc(o.referencia||"—")}${ref?" · "+esc(ref.produto):""}</td><td class="k">Lote</td><td class="v">${esc(o.lote||"—")}</td></tr>
+      <tr><td class="k">Produto</td><td class="v">${esc(o.produto||"—")}</td><td class="k">Prioridade</td><td class="v">${esc(o.prioridade||"—")}</td></tr>
+      <tr><td class="k">Coleção</td><td class="v">${esc(o.colecao||"—")}</td><td class="k">Prazo interno</td><td class="v">${fmtDate(o.prazo)}</td></tr>
+      <tr><td class="k">Tecido</td><td class="v">${esc(o.tecido||"—")}</td><td class="k">Entrega e-commerce</td><td class="v">${fmtDate(o.entregaEcom)}</td></tr>
+      <tr><td class="k">Cor</td><td class="v">${esc(o.cor||"—")}</td><td class="k">Responsável</td><td class="v">${esc(o.responsavel||"—")}</td></tr>
+    </table>
+
+    ${compSection}
+
+    <div class="ft-sec">Grade e quantidades</div>
+    <table class="ft"><tr>${gradeHead}<th class="r">Total</th></tr><tr>${gradeVals}<td class="r"><b>${total} un.</b></td></tr></table>
+
+    <div class="ft-sec">Matéria-prima têxtil</div>
+    <table class="ft"><tr><th>Tecido</th><th class="c">Un.</th><th class="r">Consumo/peça</th><th class="r">Total (${total} pç)</th></tr>${texRows}</table>
+
+    <div class="ft-sec">Aviamentos</div>
+    <table class="ft"><tr><th>Item</th><th class="c">Un.</th><th class="r">Consumo/peça</th><th class="r">Total (${total} pç)</th></tr>${aviRows}</table>
+
+    ${seqSection}
+
+    <div class="ft-sec">Controle de etapas — acompanhamento por setor</div>
+    <table class="ft ft-rot"><tr><th>Etapa</th><th>Responsável</th><th class="c">Início</th><th class="c">Término</th><th class="c">Visto</th></tr>${rotRows}</table>
+
+    <div class="ft-sec">Observações</div>
+    <div class="ft-obs">${esc(o.obs||"")}</div>
+
+    <div class="ft-foot">
+      <div class="ft-sign">Emitido por</div>
+      <div class="ft-sign">Conferido por</div>
+      <div class="ft-sign">Data</div>
+    </div>
+    <div class="ft-note">ELLUN · CONTROLE DE PRODUÇÃO · FEITO EM SANTA CATARINA</div>`;
+
+  document.getElementById("fichaRoot").innerHTML=`
+    <div class="ficha-overlay" id="fichaOv">
+      <div class="ficha-toolbar">
+        <button class="btn" id="fichaPrint">🖨 Imprimir</button>
+        <button class="btn ghost" id="fichaClose">Fechar</button>
+      </div>
+      <div class="ficha-page">${page}</div>
+    </div>`;
+  const close=()=>{document.getElementById("fichaRoot").innerHTML="";};
+  document.getElementById("fichaPrint").addEventListener("click",()=>window.print());
+  document.getElementById("fichaClose").addEventListener("click",close);
+  document.getElementById("fichaOv").addEventListener("click",e=>{if(e.target.id==="fichaOv")close();});
+}
+
+/* ================= AVIAMENTOS ================= */
+const brl=n=>"R$ "+(Number(n)||0).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtNum=n=>Number.isInteger(n)?n.toLocaleString("pt-BR"):(Math.round(n*10)/10).toLocaleString("pt-BR");
+
+function avMatch(aplicaA,o){
+  if(!aplicaA||aplicaA==="Todas")return true;
+  return aplicaA===o.colecao;
+}
+/* consumo por peça: se o aviamento tem consumo por referência (caso dos tecidos),
+   usa o valor da referência da OP; senão, usa o consumo fixo */
+function avConsumo(av,o){
+  if(av.tipo==="tecido"){
+    const r=o.referencia&&state.refs[o.referencia];
+    return r?Number(r.consumoTecido)||0:0;
+  }
+  const m=av.consumoPorRef;
+  if(m&&o.referencia&&m[o.referencia]!=null&&m[o.referencia]!=="")return Number(m[o.referencia])||0;
+  return Number(av.consumoPeca)||0;
+}
+/* peças da OP a que o insumo se aplica: um tamanho específico ou a grade toda */
+function avUnits(av,o){
+  if(av.tamanho)return Number(o.grade&&o.grade[av.tamanho])||0;
+  return gradeTotal(o.grade);
+}
+/* baixa/consumo total do insumo para a OP */
+function avBaixa(av,o){return avUnits(av,o)*avConsumo(av,o);}
+/* necessidade = OPs abertas que AINDA NÃO cruzaram a etapa de consumo do aviamento
+   (as que já cruzaram foram debitadas do estoque pela baixa automática) */
+function avDemanda(av){
+  const escopo=state.avEscopo||"Todos";
+  const consumeIdx=STAGE_KEYS.indexOf(av.etapaConsumo||"costura");
+  return state.ops
+    .filter(o=>o.etapa!=="pronto")
+    .filter(o=>escopo==="Todos"||o.lote===escopo)
+    .filter(o=>avMatch(av.aplicaA,o))
+    .filter(o=>STAGE_KEYS.indexOf(o.etapa)<consumeIdx)
+    .reduce((t,o)=>t+avBaixa(av,o),0);
+}
+function avStatus(av,dem,saldo){
+  if(av.emTransito)return {label:"Em trânsito",cls:"transit",buy:false};
+  if(saldo<0)return {label:"Comprar · faltam "+fmtNum(Math.ceil(-saldo))+" "+(av.unidade||""),cls:"buy",buy:true};
+  if((Number(av.estoque)||0)<(Number(av.minimo)||0))return {label:"Repor (abaixo do mínimo)",cls:"repor",buy:true};
+  return {label:"OK",cls:"ok",buy:false};
+}
+
+function renderAviamentos(){
+  const sel=document.getElementById("avTable");
+  if(!sel)return;
+  buildAvEscopo();
+
+  const escopo=state.avEscopo||"Todos";
+  const openUnits=state.ops.filter(o=>o.etapa!=="pronto").filter(o=>escopo==="Todos"||o.lote===escopo).reduce((t,o)=>t+gradeTotal(o.grade),0);
+
+  let custoTotal=0,aComprar=0;
+  state.aviamentos.forEach(av=>{
+    const dem=avDemanda(av);
+    const saldo=(Number(av.estoque)||0)-dem;
+    custoTotal+=dem*(Number(av.precoUnit)||0);
+    if(avStatus(av,dem,saldo).buy)aComprar++;
+  });
+
+  const cards=[
+    {n:state.aviamentos.length,l:"Itens cadastrados"},
+    {n:openUnits.toLocaleString("pt-BR"),l:"Unidades no escopo"},
+    {n:aComprar,l:"Itens a comprar",warn:aComprar>0},
+    {n:brl(custoTotal),l:"Custo de aviamentos (escopo)"},
+  ];
+  document.getElementById("avSummary").innerHTML=cards.map(c=>
+    `<div class="stat ${c.warn?"warn":""}"><b>${c.n}</b><span>${c.l}</span></div>`).join("");
+
+  const q=(state.avq||"").trim().toLowerCase();
+  const rows=state.aviamentos.filter(av=>!q||((av.item||"")+(av.fornecedor||"")+(av.aplicaA||"")).toLowerCase().includes(q));
+
+  const head=`<thead><tr>
+    <th>Item</th><th>Fornecedor</th><th class="num">Consumo/peça</th><th>Aplica-se</th>
+    <th class="num">Estoque</th><th class="num">Mínimo</th><th class="num">Necessidade</th>
+    <th class="num">Saldo</th><th class="num">Lead</th><th>Status</th><th></th>
+  </tr></thead>`;
+
+  const body=rows.length? rows.map(av=>{
+    const dem=avDemanda(av);
+    const saldo=(Number(av.estoque)||0)-dem;
+    const st=avStatus(av,dem,saldo);
+    return `<tr>
+      <td><div class="av-item">${esc(av.item)}</div>${av.obs?`<div class="av-sub">${esc(av.obs)}</div>`:""}</td>
+      <td>${esc(av.fornecedor||"—")}</td>
+      <td class="num">${av.tipo==="tecido"?"por referência":fmtNum(Number(av.consumoPeca)||0)+" "+esc(av.unidade||"")}</td>
+      <td>${av.aplicaA==="Todas"?"Todas as peças":"Coleção "+esc(av.aplicaA)}${av.tamanho?" · tam "+esc(av.tamanho):""}<div class="av-sub">baixa na etapa: ${esc(stageLabel(av.etapaConsumo||"costura"))}</div></td>
+      <td class="num">${fmtNum(Number(av.estoque)||0)} ${esc(av.unidade||"")}</td>
+      <td class="num">${fmtNum(Number(av.minimo)||0)}</td>
+      <td class="num">${fmtNum(dem)} ${esc(av.unidade||"")}</td>
+      <td class="num ${saldo<0?"saldo-neg":"saldo-pos"}">${saldo<0?"":"+"}${fmtNum(saldo)}</td>
+      <td class="num">${av.leadTime?av.leadTime+"d":"—"}</td>
+      <td><span class="badge ${st.cls}">${st.label}</span></td>
+      <td class="num"><button class="icon" data-avact="edit" data-id="${av.id}">✎</button> <button class="icon" data-avact="del" data-id="${av.id}">✕</button></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="11" class="av-empty">Nenhum aviamento cadastrado</td></tr>`;
+
+  sel.innerHTML=head+"<tbody>"+body+"</tbody>";
+  sel.querySelectorAll("[data-avact]").forEach(b=>b.addEventListener("click",()=>{
+    const id=b.dataset.id;
+    if(b.dataset.avact==="edit")openAvModal("edit",id);
+    else removeAv(id);
+  }));
+}
+
+function removeAv(id){
+  const av=state.aviamentos.find(x=>x.id===id);
+  uiConfirm("Excluir o insumo "+(av?av.item:"")+"?",()=>{
+    state.aviamentos=state.aviamentos.filter(x=>x.id!==id);
+    Object.keys(state.baixas).forEach(k=>{if(k.endsWith("|"+id))delete state.baixas[k];});
+    persistAv();persistBx();renderAviamentos();
+  });
+}
+
+/* re-baseline de um aviamento: registra as OPs que já cruzaram a etapa de consumo
+   SEM alterar o estoque (o valor informado é tratado como o físico atual) */
+function baselineAv(av){
+  const idx=k=>STAGE_KEYS.indexOf(k);
+  state.ops.forEach(o=>{
+    const key=o.id+"|"+av.id;
+    const crossed=avMatch(av.aplicaA,o)&&idx(o.etapa)>=idx(av.etapaConsumo||"costura");
+    if(crossed)state.baixas[key]={amount:avBaixa(av,o)};
+    else delete state.baixas[key];
+  });
+}
+
+function openAvModal(mode,id){
+  const av=mode==="edit"?state.aviamentos.find(a=>a.id===id):null;
+  const f=av||{item:"",tipo:"aviamento",fornecedor:"",unidade:"un",precoUnit:"",consumoPeca:"",aplicaA:"Todas",tamanho:"",etapaConsumo:"costura",estoque:"",minimo:"",leadTime:"",emTransito:false,obs:""};
+  const opt=(arr,v)=>arr.map(x=>`<option ${x===v?"selected":""}>${x}</option>`).join("");
+  const isTec=(f.tipo||"aviamento")==="tecido";
+
+  document.getElementById("modalRoot").innerHTML=`
+  <div class="overlay" id="avOv">
+    <div class="modal">
+      <div class="modal-head">
+        <span class="t">${mode==="new"?"Novo insumo":"Editar insumo"}</span>
+      </div>
+      <div class="modal-body">
+        <div class="g2">
+          <div class="field"><label>Item</label><input id="a_item" value="${esc(f.item)}" placeholder="Ex.: Elástico 40mm"></div>
+          <div class="field"><label>Tipo</label><select id="a_tipo"><option value="aviamento" ${!isTec?"selected":""}>Aviamento</option><option value="tecido" ${isTec?"selected":""}>Tecido</option></select></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label>Fornecedor</label><input id="a_forn" value="${esc(f.fornecedor)}" placeholder="Fornecedor"></div>
+          <div class="field"><label>Unidade de compra</label><select id="a_un">${opt(AV_UNITS,f.unidade)}</select></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label>Preço unitário (R$)</label><input type="number" step="0.01" min="0" id="a_preco" value="${f.precoUnit}"></div>
+          <div class="field" id="consumoField"><label>Consumo por peça</label><input type="number" step="0.001" min="0" id="a_consumo" value="${f.consumoPeca}" placeholder="ex.: 0,95"></div>
+        </div>
+        <div class="mod-intro" id="tecNote" style="display:${isTec?"block":"none"};margin:-4px 0 8px">Tecido: o consumo por peça vem do campo <b>Consumo de tecido</b> de cada referência (módulo Cadastros).</div>
+        <div class="g2">
+          <div class="field"><label>Aplica-se a</label><select id="a_aplica">${opt(AV_APLICA,f.aplicaA)}</select></div>
+          <div class="field"><label>Tamanho (opcional)</label><select id="a_tam"><option value="">Todos os tamanhos</option>${SIZES.map(s=>`<option ${f.tamanho===s?"selected":""}>${s}</option>`).join("")}</select></div>
+        </div>
+        <div class="field"><label>Baixa na etapa</label><select id="a_etapa">${STAGES.map(s=>`<option value="${s.key}" ${(f.etapaConsumo||"costura")===s.key?"selected":""}>${s.label}</option>`).join("")}</select></div>
+        <div class="g2">
+          <div class="field"><label>Estoque atual</label><input type="number" step="0.01" min="0" id="a_estoque" value="${f.estoque}"></div>
+          <div class="field"><label>Estoque mínimo</label><input type="number" step="0.01" min="0" id="a_min" value="${f.minimo}"></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label>Lead time (dias)</label><input type="number" min="0" id="a_lead" value="${f.leadTime}"></div>
+          <div class="field"><label>Situação</label><label class="chk" style="padding-top:9px"><input type="checkbox" id="a_transito" ${f.emTransito?"checked":""}> Pedido em trânsito</label></div>
+        </div>
+        <div class="field"><label>Observações</label><textarea id="a_obs" rows="2" placeholder="Notas…">${esc(f.obs)}</textarea></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="avCancel">Cancelar</button>
+        <button class="btn btn-save" id="avSave">${mode==="new"?"Adicionar":"Salvar"}</button>
+      </div>
+    </div>
+  </div>`;
+
+  const val=()=>{document.getElementById("avSave").disabled=!document.getElementById("a_item").value.trim();};
+  document.getElementById("a_item").addEventListener("input",val);val();
+  const tipoSel=document.getElementById("a_tipo");
+  const syncTipo=()=>{const t=tipoSel.value==="tecido";document.getElementById("consumoField").style.display=t?"none":"";document.getElementById("tecNote").style.display=t?"block":"none";};
+  tipoSel.addEventListener("change",syncTipo);
+  document.getElementById("avOv").addEventListener("click",e=>{if(e.target.id==="avOv")closeModal();});
+  document.getElementById("avCancel").addEventListener("click",closeModal);
+  document.getElementById("avSave").addEventListener("click",()=>{
+    const tipo=document.getElementById("a_tipo").value;
+    const data={
+      item:document.getElementById("a_item").value.trim(),
+      tipo,
+      fornecedor:document.getElementById("a_forn").value.trim(),
+      unidade:document.getElementById("a_un").value,
+      precoUnit:Number(document.getElementById("a_preco").value)||0,
+      consumoPeca:tipo==="tecido"?0:(Number(document.getElementById("a_consumo").value)||0),
+      aplicaA:document.getElementById("a_aplica").value,
+      tamanho:document.getElementById("a_tam").value,
+      etapaConsumo:document.getElementById("a_etapa").value,
+      consumoPorRef:null,
+      estoque:Number(document.getElementById("a_estoque").value)||0,
+      minimo:Number(document.getElementById("a_min").value)||0,
+      leadTime:Number(document.getElementById("a_lead").value)||0,
+      emTransito:document.getElementById("a_transito").checked,
+      obs:document.getElementById("a_obs").value.trim(),
+    };
+    let avRef;
+    if(mode==="new"){avRef={...data,id:"av-"+Date.now()};state.aviamentos.push(avRef);}
+    else{avRef={...state.aviamentos.find(a=>a.id===id),...data};state.aviamentos=state.aviamentos.map(a=>a.id===id?avRef:a);}
+    baselineAv(avRef);
+    persistAv();persistBx();closeModal();renderAviamentos();
+  });
+}
+
+/* ---------------- exportações CSV ---------------- */
+function downloadCSV(filename,rows){
+  const cell=v=>{v=String(v==null?"":v);return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  const csv="\uFEFF"+rows.map(r=>r.map(cell).join(";")).join("\r\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},0);
+}
+function exportCompras(){
+  const num=v=>Number(v||0).toLocaleString("pt-BR",{maximumFractionDigits:3});
+  const escopo=state.avEscopo||"Todos";
+  const rows=[["Item","Tipo","Fornecedor","Unidade","Estoque atual","Mínimo","Necessidade","Saldo","Comprar","Lead time (dias)","Status","Escopo"]];
+  state.aviamentos.forEach(av=>{
+    const dem=avDemanda(av);
+    const saldo=(Number(av.estoque)||0)-dem;
+    const st=avStatus(av,dem,saldo);
+    if(!st.buy)return;
+    const comprar=Math.ceil(Math.max(dem-(Number(av.estoque)||0),(Number(av.minimo)||0)-(Number(av.estoque)||0),0));
+    rows.push([av.item,av.tipo==="tecido"?"Tecido":"Aviamento",av.fornecedor||"",av.unidade||"",num(av.estoque),num(av.minimo),num(dem),num(saldo),num(comprar),av.leadTime||"",st.label.split("·")[0].trim(),escopo==="Todos"?"Todas as OPs abertas":escopo]);
+  });
+  if(rows.length===1){uiAlert("Nenhum item a comprar no escopo atual. 🎉");return;}
+  downloadCSV("ellun-lista-compras.csv",rows);
+}
+function exportProntas(){
+  const rows=[["SKU","Referência","Produto","Coleção","Cor","Tamanho","Quantidade","Lote","OP"]];
+  state.ops.filter(o=>o.etapa==="pronto").forEach(o=>{
+    SIZES.forEach(s=>{
+      const q=Number(o.grade&&o.grade[s])||0;if(!q)return;
+      const sku=[o.referencia||"REF",(o.cor||"").toUpperCase().replace(/\s+/g,""),s].filter(Boolean).join("-");
+      rows.push([sku,o.referencia||"",o.produto||"",o.colecao||"",o.cor||"",s,q,o.lote||"",o.codigo||""]);
+    });
+  });
+  if(rows.length===1){uiAlert("Nenhuma OP em Pronto para exportar.");return;}
+  downloadCSV("ellun-ops-prontas-bling.csv",rows);
+}
+
+/* ---------------- backup (exportar/importar tudo) ---------------- */
+function exportBackup(){
+  const data={app:"ellun-kanban",version:1,exportedAt:new Date().toISOString(),ops:state.ops,aviamentos:state.aviamentos,refs:state.refs,baixas:state.baixas};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download="ellun-backup-"+today()+".json";document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},0);
+}
+function importBackup(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    let data;
+    try{data=JSON.parse(reader.result);}catch(e){uiAlert("Arquivo inválido: não foi possível ler o backup.");return;}
+    if(!data||typeof data!=="object"||!Array.isArray(data.ops)||!Array.isArray(data.aviamentos)){uiAlert("Este arquivo não parece ser um backup do controle Ellun.");return;}
+    uiConfirm("Restaurar este backup? Ele substitui TODOS os dados atuais (OPs, insumos, referências e baixas).\n\nExportado em: "+(data.exportedAt?data.exportedAt.slice(0,10):"—"),()=>{
+      state.ops=Array.isArray(data.ops)?data.ops:[];
+      state.aviamentos=Array.isArray(data.aviamentos)?data.aviamentos:[];
+      state.refs=(data.refs&&typeof data.refs==="object")?data.refs:{};
+      state.baixas=(data.baixas&&typeof data.baixas==="object")?data.baixas:{};
+      reconcile();
+      persist();persistAv();persistRef();persistBx();
+      buildFilters();render();switchView("producao");
+      uiAlert("Backup restaurado com sucesso.");
+    });
+  };
+  reader.onerror=()=>uiAlert("Não foi possível ler o arquivo.");
+  reader.readAsText(file);
+}
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+init();
+</script>
+</body>
+</html>
