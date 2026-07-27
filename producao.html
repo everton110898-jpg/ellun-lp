@@ -155,6 +155,7 @@
     #fichaRoot .ficha-overlay{position:static;background:none;padding:0;overflow:visible;}
     #fichaRoot .ficha-toolbar{display:none;}
     #fichaRoot .ficha-page{box-shadow:none;max-width:none;margin:0;padding:0;}
+    .ft-desenho{page-break-before:always;}
     @page{margin:14mm;}
   }
   ::-webkit-scrollbar{height:8px;width:8px;}
@@ -911,12 +912,14 @@ function printFicha(id){
     <div class="ft-sec">Observações</div>
     <div class="ft-obs">${esc(o.obs||"")}</div>
 
+    ${o.referencia?`<div class="ft-desenho"><div class="ft-sec">Desenho técnico</div><img src="${esc(o.referencia)}.png" alt="Desenho ${esc(o.referencia)}" style="max-width:100%;display:block;border:1px solid #ccc;margin-top:4px" onerror="this.style.display='none';this.previousElementSibling.style.display='none'"></div>`:""}
+
     <div class="ft-foot">
       <div class="ft-sign">Emitido por</div>
       <div class="ft-sign">Conferido por</div>
       <div class="ft-sign">Data</div>
     </div>
-    <div class="ft-note">ELLUN · CONTROLE DE PRODUÇÃO · FEITO EM SANTA CATARINA</div>`;
+    <div class="ft-note">ELLUN · CONTROLE DE PRODUÇÃO</div>`;
 
   document.getElementById("fichaRoot").innerHTML=`
     <div class="ficha-overlay" id="fichaOv">
