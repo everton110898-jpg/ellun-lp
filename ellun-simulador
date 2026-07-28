@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ellun · Simulador de Feed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#F4EFE4;
+    --paper:#FBF8F1;
+    --sand:#D8C7A2;
+    --sand-soft:#E7DCC4;
+    --olive:#5E6446;
+    --olive-soft:#7C8360;
+    --charcoal:#2C2A25;
+    --charcoal-soft:#4A4740;
+    --gold:#B7924E;
+    --gold-soft:#CBAE74;
+    --clay:#9C7A5C;
+    --line:rgba(44,42,37,.12);
+    --shadow:0 18px 50px -24px rgba(44,42,37,.45);
+    /* pillar colors */
+    --p-produto:#33302B;
+    --p-lifestyle:#7C8360;
+    --p-origem:#9C7A5C;
+    --p-proposito:#B7924E;
+    --p-comunidade:#8A93A6;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(183,146,78,.10), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(94,100,70,.10), transparent 55%),
+      var(--cream);
+    color:var(--charcoal);
+    font-family:'Jost',system-ui,sans-serif;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  a{color:inherit;}
+
+  .wrap{max-width:1360px;margin:0 auto;padding:28px 22px 64px;}
+
+  /* ---------- App header ---------- */
+  .appbar{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:20px;flex-wrap:wrap;
+    padding-bottom:18px;margin-bottom:26px;
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;flex-direction:column;gap:2px;}
+  .brand .kicker{
+    font-size:11px;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--olive);font-weight:500;
+  }
+  .brand h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;font-size:38px;line-height:.95;margin:2px 0 0;
+    letter-spacing:.02em;color:var(--charcoal);
+  }
+  .brand h1 span{color:var(--gold);}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .btn{
+    font-family:'Jost',sans-serif;font-weight:400;font-size:13px;
+    letter-spacing:.02em;color:var(--charcoal);
+    background:var(--paper);border:1px solid var(--line);
+    padding:9px 15px;border-radius:999px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:border-color .2s, background .2s, transform .1s;
+  }
+  .btn:hover{border-color:var(--olive-soft);}
+  .btn:active{transform:translateY(1px);}
+  .btn.on{background:var(--olive);color:#F7F3EA;border-color:var(--olive);}
+  .btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  .btn:disabled{opacity:.38;cursor:not-allowed;}
+  .save-status{font-size:12px;color:var(--olive);align-self:center;font-weight:400;}
+  .switch{
+    width:34px;height:18px;border-radius:999px;background:var(--sand);
+    position:relative;transition:background .2s;flex:0 0 auto;
+  }
+  .btn.on .switch{background:rgba(247,243,234,.35);}
+  .switch::after{
+    content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;
+    border-radius:50%;background:var(--paper);transition:left .2s;
+  }
+  .btn.on .switch::after{left:18px;}
+
+  /* ---------- Layout ---------- */
+  .stage{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:40px;align-items:start;}
+  @media (max-width:980px){ .stage{grid-template-columns:1fr;gap:26px;} }
+
+  /* ---------- Phone (template Instagram original) ---------- */
+  .phone{
+    background:#fff;
+    border:1px solid #dbdbdb;
+    border-radius:34px;
+    box-shadow:0 18px 50px -24px rgba(0,0,0,.42);
+    overflow:hidden;
+    position:sticky;top:20px;
+    color:#262626;
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (max-width:980px){ .phone{position:static;max-width:520px;margin:0 auto;} }
+  .status{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 18px 4px;font-size:13px;color:#262626;font-weight:600;
+  }
+  .status .sig{font-weight:500;letter-spacing:.5px;}
+  .ig-top{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:6px 14px 10px;
+  }
+  .ig-handle{display:flex;align-items:center;gap:6px;font-weight:700;font-size:20px;color:#262626;}
+  .ig-handle .chev{font-size:11px;color:#262626;}
+  .ig-top .glyphs{display:flex;gap:20px;color:#262626;font-size:19px;}
+
+  .profile{padding:2px 16px 6px;}
+  .profile-row{display:flex;align-items:center;gap:24px;}
+  .avatar{
+    width:84px;height:84px;border-radius:50%;flex:0 0 auto;padding:3px;
+    background-image:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .avatar .inner{
+    width:100%;height:100%;border-radius:50%;border:2px solid #fff;
+    background:radial-gradient(circle at 35% 30%,#f0f0f0,#d9d9d9);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',serif;font-size:32px;color:#333;font-weight:600;
+  }
+  .stats{display:flex;flex:1;justify-content:space-around;text-align:center;}
+  .stats b{display:block;font-weight:700;font-size:17px;color:#262626;}
+  .stats small{font-size:13px;color:#262626;}
+
+  .bio{padding:8px 2px 2px;}
+  .bio .name{font-weight:600;font-size:14px;color:#262626;}
+  .bio p{margin:2px 0;font-size:14px;line-height:1.4;color:#262626;font-weight:400;}
+  .bio .muted{color:#8e8e8e;}
+  .bio .link{color:#00376b;font-weight:600;}
+
+  .actions{display:flex;gap:6px;padding:10px 16px 6px;}
+  .actions button{
+    flex:1;font-family:inherit;font-size:14px;font-weight:600;
+    border:0;border-radius:8px;padding:8px 0;cursor:pointer;color:#fff;background:#0095f6;
+  }
+  .actions button.sec{background:#efefef;color:#262626;}
+  .actions button.icn{flex:0 0 40px;background:#efefef;color:#262626;font-size:15px;}
+
+  .highlights{display:flex;gap:18px;padding:12px 16px 10px;overflow-x:auto;}
+  .hl{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 auto;}
+  .hl-ring{
+    width:58px;height:58px;border-radius:50%;
+    border:1px solid #dbdbdb;background:#fafafa;
+    display:flex;align-items:center;justify-content:center;font-size:20px;color:#333;
+  }
+  .hl small{font-size:12px;color:#262626;}
+
+  .tabbar{display:flex;border-top:1px solid #dbdbdb;}
+  .tabbar div{flex:1;text-align:center;padding:11px 0;font-size:19px;color:#8e8e8e;}
+  .tabbar div.active{color:#262626;border-top:1px solid #262626;margin-top:-1px;}
+
+
+  /* ---------- Grid ---------- */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:0;background:#fff;}
+  .tile{
+    position:relative;aspect-ratio:4/5;overflow:hidden;cursor:grab;
+    background-size:cover;background-position:center;
+    color:#F7F3EA;
+  }
+  .tile:focus-visible{outline:2px solid var(--gold);outline-offset:-2px;}
+  .tile.dragging{opacity:.35;}
+  .tile.over{outline:2px dashed var(--gold);outline-offset:-3px;}
+  .tile.selected{outline:2px solid var(--gold);outline-offset:-2px;}
+  .tile .veil{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(20,19,16,.05) 0%,rgba(20,19,16,.05) 45%,rgba(20,19,16,.55) 100%);
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:9px 9px 10px;
+  }
+  .tile .veil.hide{opacity:0;}
+  .tile .kind{
+    align-self:flex-start;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+    background:rgba(247,243,234,.86);color:var(--charcoal);
+    padding:3px 7px;border-radius:999px;font-weight:500;
+  }
+  .tile .concept{
+    font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.15;font-weight:500;
+    text-shadow:0 1px 8px rgba(0,0,0,.4);
+  }
+  .tile .num{
+    position:absolute;top:8px;right:8px;font-size:10px;font-weight:500;
+    background:rgba(20,19,16,.4);padding:2px 6px;border-radius:999px;letter-spacing:.05em;
+  }
+  .tile .pill-dot{
+    position:absolute;bottom:9px;right:9px;width:11px;height:11px;border-radius:50%;
+    border:1.5px solid rgba(247,243,234,.85);
+  }
+  .tile .fmt{
+    position:absolute;bottom:7px;left:7px;width:20px;height:20px;border-radius:50%;
+    background:rgba(20,19,16,.55);color:#F7F3EA;font-size:10px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .tile.uploaded .concept, .tile.uploaded .kind{display:var(--concept-display,flex);}
+
+  /* ---------- Right column ---------- */
+  .panel{
+    background:var(--paper);border:1px solid var(--line);border-radius:20px;
+    padding:22px 22px 24px;margin-bottom:22px;
+  }
+  .panel h2{
+    font-family:'Cormorant Garamond',serif;font-weight:600;font-size:23px;margin:0 0 3px;
+  }
+  .panel .sub{font-size:12.5px;color:var(--charcoal-soft);margin:0 0 18px;line-height:1.5;}
+  .eyebrow{font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--olive);font-weight:500;margin-bottom:9px;}
+
+  /* inspector */
+  .insp-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;}
+  .insp-thumb{
+    width:88px;flex:0 0 auto;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
+    background-size:cover;background-position:center;border:1px solid var(--line);
+  }
+  .insp-meta{flex:1;min-width:0;}
+  .insp-meta .b{font-size:11px;color:var(--charcoal-soft);letter-spacing:.04em;}
+  .insp-meta h3{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:500;margin:2px 0 8px;line-height:1.1;}
+  .tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:4px 10px;border-radius:999px;background:var(--cream);border:1px solid var(--line);margin:0 6px 6px 0;}
+  .tag .d{width:9px;height:9px;border-radius:50%;}
+
+  label.field{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--charcoal-soft);margin:14px 0 6px;font-weight:500;}
+  textarea, select{
+    width:100%;font-family:'Jost',sans-serif;font-size:13.5px;font-weight:300;color:var(--charcoal);
+    background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:11px 12px;resize:vertical;
+  }
+  textarea{min-height:88px;line-height:1.5;}
+  textarea:focus, select:focus{outline:2px solid var(--gold-soft);outline-offset:1px;border-color:var(--olive-soft);}
+  .caption-count{font-size:11px;color:var(--charcoal-soft);margin-top:5px;text-align:right;}
+  .insp-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px;}
+  .insp-actions .btn{font-size:12.5px;padding:8px 13px;}
+  .file-btn{position:relative;overflow:hidden;}
+  .file-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .empty-insp{font-size:13px;color:var(--charcoal-soft);line-height:1.6;}
+
+  /* legend */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .two-col label.field{margin-top:14px;}
+
+  /* evaluator */
+  .eval{border:1px solid var(--gold-soft);}
+  .score-hero{display:flex;align-items:center;gap:16px;margin:6px 0 18px;}
+  .score-num{
+    font-family:'Cormorant Garamond',serif;font-weight:600;font-size:52px;line-height:.9;
+    display:flex;align-items:baseline;gap:2px;
+  }
+  .score-num small{font-size:17px;font-weight:500;color:var(--charcoal-soft);}
+  .score-lab{display:flex;flex-direction:column;gap:3px;}
+  .score-lab b{font-size:16px;font-weight:500;letter-spacing:.01em;}
+  .score-lab span{font-size:11.5px;color:var(--charcoal-soft);line-height:1.4;}
+  .crit-list{display:flex;flex-direction:column;gap:14px;}
+  .block.sep{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);}
+  .block-head{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--olive);font-weight:500;margin-bottom:10px;}
+  .crit-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+  .crit-name{font-size:13px;font-weight:400;}
+  .crit-score{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;}
+  .crit-bar{height:5px;border-radius:999px;background:var(--sand-soft);overflow:hidden;}
+  .crit-bar i{display:block;height:100%;border-radius:999px;transition:width .35s ease;}
+  .crit-note{font-size:11.5px;color:var(--charcoal-soft);line-height:1.45;margin-top:6px;}
+  /* score color classes */
+  .g{color:#5E6446;} .crit-bar i.g{background:#6C7458;} .score-num.g{color:#5E6446;}
+  .o{color:#B7924E;} .crit-bar i.o{background:#C9A961;} .score-num.o{color:#B7924E;}
+  .w{color:#9C7A5C;} .crit-bar i.w{background:#B08A63;} .score-num.w{color:#9C7A5C;}
+  .b{color:#AE5030;} .crit-bar i.b{background:#AE5030;} .score-num.b{color:#AE5030;}
+
+  /* per-post eval */
+  .post-eval{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);}
+  .pe-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .ready{font-size:10.5px;letter-spacing:.04em;padding:4px 9px;border-radius:999px;font-weight:400;}
+  .ready.yes{background:rgba(108,116,88,.16);color:#5E6446;}
+  .ready.no{background:var(--cream);color:var(--charcoal-soft);border:1px solid var(--line);}
+  .pe-score{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;}
+  .score-num.sm{font-size:34px;}
+  .pe-score b{font-size:14px;font-weight:500;}
+  .pe-hint{font-size:11px;color:var(--charcoal-soft);margin:-8px 0 14px;}
+  .reel-eval{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);}
+  .reel-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;}
+  .reel-controls label.field{margin-top:6px;}
+  .reel-togs{display:flex;gap:8px;flex-wrap:wrap;}
+  .rl-tog{font-family:'Jost',sans-serif;font-size:12px;color:var(--charcoal-soft);
+    background:var(--cream);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;
+    transition:background .15s,color .15s,border-color .15s;}
+  .rl-tog.on{background:var(--olive);color:#F7F3EA;border-color:var(--olive);}
+  .rl-tog:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+  .legend{display:flex;flex-direction:column;gap:11px;}
+  .leg-row{display:flex;align-items:center;gap:11px;font-size:13px;}
+  .leg-row .d{width:13px;height:13px;border-radius:50%;flex:0 0 auto;}
+  .leg-row .lab{flex:1;}
+  .leg-row .lab b{font-weight:500;}
+  .leg-row .lab small{display:block;font-size:11px;color:var(--charcoal-soft);}
+  .leg-row .cnt{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--charcoal-soft);}
+
+  .coll-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;letter-spacing:.04em;margin-bottom:9px;}
+  .swatches{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .sw{display:flex;flex-direction:column;gap:6px;font-size:10.5px;color:var(--charcoal-soft);line-height:1.25;}
+  .sw span{height:44px;border-radius:9px;border:1px solid var(--line);display:block;}
+  @media (max-width:420px){ .swatches{gap:7px;} .sw{font-size:9.5px;} }
+
+  .checklist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .checklist li{display:flex;gap:9px;font-size:13px;line-height:1.45;color:var(--charcoal-soft);}
+  .checklist li::before{content:"—";color:var(--gold);flex:0 0 auto;}
+  .rule{height:1px;background:var(--line);margin:18px 0;border:0;}
+  .note{font-size:12px;color:var(--charcoal-soft);line-height:1.55;background:var(--cream);border-left:2px solid var(--gold);padding:11px 13px;border-radius:0 10px 10px 0;}
+  .foot{font-size:11.5px;color:var(--charcoal-soft);text-align:center;margin-top:30px;line-height:1.6;}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="appbar">
+    <div class="brand">
+      <span class="kicker">Simulador de Feed</span>
+      <h1>Ellun<span>.</span></h1>
+    </div>
+    <div class="toolbar">
+      <button class="btn on" id="toggleConcept" aria-pressed="true">
+        <span class="switch" aria-hidden="true"></span> Mostrar conceito
+      </button>
+      <button class="btn" id="addBlockBtn">+ Bloco de 9</button>
+      <button class="btn" id="delBlockBtn">− Bloco</button>
+      <button class="btn" id="saveBtn">Salvar</button>
+      <button class="btn" id="exportBtn">Baixar</button>
+      <label class="btn file-btn">Importar<input type="file" id="importFile" accept="application/json,.json" /></label>
+      <button class="btn" id="resetBtn">Recomeçar</button>
+      <span id="saveStatus" class="save-status" aria-live="polite"></span>
+    </div>
+  </header>
+
+  <div class="stage">
+
+    <!-- PHONE -->
+    <section class="phone" aria-label="Prévia do perfil no Instagram">
+      <div class="status"><span>9:41</span><span class="sig">📶 🔋</span></div>
+      <div class="ig-top">
+        <div class="ig-handle">ellun <span class="chev">▾</span></div>
+        <div class="glyphs">＋ ☰</div>
+      </div>
+
+      <div class="profile">
+        <div class="profile-row">
+          <div class="avatar"><div class="inner">e</div></div>
+          <div class="stats">
+            <div><b id="postCount">15</b><small>publicações</small></div>
+            <div><b>—</b><small>seguidores</small></div>
+            <div><b>—</b><small>seguindo</small></div>
+          </div>
+        </div>
+        <div class="bio">
+          <div class="name">ELLUN · Premium Activewear</div>
+          <p>Desenhado para valorizar você em cada movimento ✦</p>
+          <p class="muted">Produção consciente · Feito no Brasil 🌿</p>
+          <p class="link">ellun.com.br</p>
+        </div>
+        <div class="actions">
+          <button>Seguir</button>
+          <button class="sec">Mensagem</button>
+          <button class="sec icn">＋</button>
+        </div>
+      </div>
+
+      <div class="highlights" aria-label="Destaques">
+        <div class="hl"><div class="hl-ring">✦</div><small>A Ellun</small></div>
+        <div class="hl"><div class="hl-ring">🌿</div><small>Áurea</small></div>
+        <div class="hl"><div class="hl-ring">🤍</div><small>Essen</small></div>
+        <div class="hl"><div class="hl-ring">📦</div><small>Unboxing</small></div>
+        <div class="hl"><div class="hl-ring">📏</div><small>Tamanhos</small></div>
+        <div class="hl"><div class="hl-ring">⭐</div><small>Avaliações</small></div>
+      </div>
+
+      <div class="tabbar"><div class="active">▦</div><div>▷</div><div>👤</div></div>
+
+      <div class="grid" id="grid" aria-label="Grade de publicações — arraste para reordenar"></div>
+    </section>
+
+    <!-- RIGHT COLUMN -->
+    <div>
+      <section class="panel eval" id="evalPanel" aria-live="polite"></section>
+
+      <section class="panel" id="inspector" aria-live="polite">
+        <div class="eyebrow">Publicação · nota do post</div>
+        <div class="empty-insp" id="inspEmpty">
+          Toque em um quadro da grade para editar a legenda, o formato e o pilar, subir a foto real do ensaio — e ver a nota individual daquele post.
+        </div>
+        <div id="inspBody" style="display:none;"></div>
+      </section>
+
+      <section class="panel">
+        <div class="eyebrow">Pilares de conteúdo</div>
+        <div class="legend" id="legend"></div>
+        <div class="note" style="margin-top:16px;">
+          Comunidade fica em zero no quadrante de lançamento — ela entra depois do dia 10, com prova social e clientes reais usando as peças.
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="eyebrow">Cores da coleção</div>
+        <div class="coll">
+          <div class="coll-title" style="color:var(--olive)">Áurea</div>
+          <div class="swatches">
+            <div class="sw"><span style="background:#6C7458"></span>Verde Oliva</div>
+            <div class="sw"><span style="background:#ECE4D4"></span>Off White Areia</div>
+            <div class="sw"><span style="background:#3A2318"></span>Chocolate</div>
+          </div>
+        </div>
+        <div class="coll" style="margin-top:16px;">
+          <div class="coll-title" style="color:var(--charcoal)">Essen</div>
+          <div class="swatches">
+            <div class="sw"><span style="background:#191917"></span>Preta</div>
+            <div class="sw"><span style="background:#AE5030"></span>Terracota</div>
+            <div class="sw"><span style="background:#E8DCC7"></span>Areia Claro</div>
+          </div>
+        </div>
+        <div class="note" style="margin-top:16px;">
+          Os degradês dos quadros já seguem essas cores: Áurea puxa oliva, areia e chocolate; Essen aparece no post 9 com terracota e preta. Ao subir suas fotos reais, a paleta se mantém coesa porque a origem já é a mesma.
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="eyebrow">Disciplina da grade</div>
+        <ul class="checklist">
+          <li>Alterne editorial, detalhe de tecido e lifestyle — nunca três iguais em sequência.</li>
+          <li>Aplique o mesmo preset de cor em 100% das fotos, inclusive nos bastidores de fábrica.</li>
+          <li>Cadência de 3–4 posts fortes por semana, sempre. Consistência lê como marca; irregularidade, como amadorismo.</li>
+          <li>Formato vertical 4:5 (1080×1350px). O quadrado ficou para trás.</li>
+        </ul>
+        <hr class="rule" />
+        <div class="eyebrow">A Ellun nunca publica</div>
+        <ul class="checklist">
+          <li>Desconto ou promoção no feed principal.</li>
+          <li>Comparação direta com concorrentes.</li>
+          <li>Motivação fitness genérica ("não desista dos sonhos").</li>
+          <li>Filtro pesado que esconda a textura do tecido.</li>
+        </ul>
+      </section>
+
+      <p class="foot">Prévia editável · tudo roda no seu navegador, nada é publicado.<br/>As fotos que você subir ficam só nesta sessão.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // Pillar definitions
+  var PILLARS = {
+    produto:   {label:"Produto",    color:"#33302B", desc:"A peça, o tecido, o detalhe"},
+    lifestyle: {label:"Lifestyle",  color:"#7C8360", desc:"A roupa na vida real"},
+    origem:    {label:"Origem",     color:"#9C7A5C", desc:"Fábrica própria, feito no Brasil"},
+    proposito: {label:"Propósito",  color:"#B7924E", desc:"Por que a Ellun existe"},
+    comunidade:{label:"Comunidade", color:"#8A93A6", desc:"Clientes e prova social"}
+  };
+
+  // Duotone backgrounds in the Ellun palette (already "colorgraded")
+  function g(a,b,ang){ return "linear-gradient("+(ang||150)+"deg,"+a+","+b+")"; }
+
+  // Cores reais das coleções
+  // Áurea: Verde Oliva #6C7458 · Off White Areia #ECE4D4 · Chocolate #3A2318
+  // Essen: Preta #191917 · Terracota #AE5030 · Areia Claro #E8DCC7
+  var C = {
+    oliva:"#6C7458", offwhite:"#ECE4D4", chocolate:"#3A2318",
+    preta:"#191917", terracota:"#AE5030", areiaclaro:"#E8DCC7"
+  };
+
+  // Quadrante de lançamento — 3×3 de primeira impressão · 9 posts (3 Reels · 4 fotos · 2 carrosséis)
+  // Mix, ritmo e tons calibrados na régua Vuori. Gradientes usam as cores reais das coleções.
+  var SEED = [
+    {n:1, format:"Foto",      kind:"Editorial", pillar:"produto",   col:"Áurea", day:"18/ago",
+     concept:"Legging Áurea. A elegância também se move.",
+     caption:"Legging Áurea. Porque elegância e movimento nunca deveriam ter se separado.",
+     bg:g(C.oliva,C.offwhite,160)},
+    {n:2, format:"Reel",      kind:"Movimento", pillar:"produto",   col:"Áurea", day:"20/ago",
+     concept:"O tecido em movimento — caminhar, agachar, alongar.",
+     caption:"O argumento não se explica, se vê. Áurea em movimento. ▶",
+     bg:g(C.oliva,C.chocolate)},
+    {n:3, format:"Foto",      kind:"Manifesto", pillar:"proposito", col:"Áurea", day:"22/ago",
+     concept:"Desenhado para valorizar você em cada movimento.",
+     caption:"Desenhado para valorizar você em cada movimento. ✦ #Ellun",
+     bg:g(C.offwhite,C.areiaclaro)},
+    {n:4, format:"Reel",      kind:"Editorial", pillar:"origem",    col:"—",     day:"25/ago",
+     concept:"Do corte ao acabamento — uma fábrica só nossa.",
+     caption:"Corte, costura, acabamento: tudo em uma fábrica nossa, em Santa Catarina. Feito no Brasil, do começo ao fim. ▶",
+     bg:g(C.oliva,C.chocolate,150)},
+    {n:5, format:"Carrossel", kind:"Detalhe",   pillar:"produto",   col:"Áurea", day:"27/ago",
+     concept:"Está nos detalhes: cós, costura, canelado.",
+     caption:"Deslize para ver de perto: o cós que não marca, a costura que não pesa, o caimento que fica. →",
+     bg:g(C.chocolate,C.areiaclaro,160)},
+    {n:6, format:"Foto",      kind:"Lifestyle", pillar:"lifestyle", col:"Áurea", day:"29/ago",
+     concept:"Do pilates ao café, sem trocar de roupa.",
+     caption:"Do estúdio ao café, sem trocar de roupa — e sem perder a compostura.",
+     bg:g(C.offwhite,C.oliva,165)},
+    {n:7, format:"Carrossel", kind:"Editorial", pillar:"produto",   col:"Áurea", day:"1/set",
+     concept:"Lookbook Áurea. A coleção herói, look a look.",
+     caption:"Coleção Áurea. Feita para quem não separa elegância de performance. →",
+     bg:g(C.oliva,C.chocolate,155)},
+    {n:8, format:"Foto",      kind:"Editorial", pillar:"produto",   col:"Essen", day:"4/set",
+     concept:"Essen. O segundo ato — preta e terracota.",
+     caption:"Coleção Essen, tecido Hyper Soft. A peça que você coloca segunda e só tira no domingo.",
+     bg:g(C.terracota,C.preta,160)},
+    {n:9, format:"Reel",      kind:"Retrato",   pillar:"proposito", col:"—",     day:"10/set · geral",
+     concept:"Por que criamos a Ellun. Está no ar. ✦",
+     caption:"Está no ar. Este é o porquê da Ellun — direto de quem a criou. ▶ ellun.com.br",
+     bg:g(C.chocolate,C.preta,165)}
+  ];
+
+  // Gera um bloco de 9 posts-modelo (para planejar o próximo quadrante)
+  function makeBlock(){
+    var tpl=[
+      {format:"Foto",      kind:"Editorial", pillar:"produto",   col:"Áurea", bg:g(C.oliva,C.offwhite,160)},
+      {format:"Reel",      kind:"Lifestyle", pillar:"lifestyle", col:"Áurea", bg:g(C.areiaclaro,C.oliva,160)},
+      {format:"Foto",      kind:"Manifesto", pillar:"proposito", col:"Áurea", bg:g(C.offwhite,C.areiaclaro)},
+      {format:"Reel",      kind:"Editorial", pillar:"origem",    col:"—",     bg:g(C.oliva,C.chocolate,150)},
+      {format:"Carrossel", kind:"Detalhe",   pillar:"produto",   col:"Áurea", bg:g(C.chocolate,C.areiaclaro,160)},
+      {format:"Foto",      kind:"Lifestyle", pillar:"lifestyle", col:"Áurea", bg:g(C.offwhite,C.oliva,165)},
+      {format:"Carrossel", kind:"Editorial", pillar:"produto",   col:"Áurea", bg:g(C.oliva,C.chocolate,155)},
+      {format:"Foto",      kind:"Editorial", pillar:"produto",   col:"Essen", bg:g(C.terracota,C.preta,160)},
+      {format:"Reel",      kind:"Retrato",   pillar:"proposito", col:"—",     bg:g(C.chocolate,C.preta,165)}
+    ];
+    return tpl.map(function(t){
+      return {format:t.format,kind:t.kind,pillar:t.pillar,col:t.col,bg:t.bg,day:"",
+              concept:"Novo post · edite o conceito",
+              caption:"Escreva a legenda deste post na voz da Ellun."};
+    });
+  }
+
+  var posts = clone(SEED);
+  var selected = null;
+  var showConcept = true;
+
+  var grid = document.getElementById('grid');
+  var legend = document.getElementById('legend');
+  var inspBody = document.getElementById('inspBody');
+  var inspEmpty = document.getElementById('inspEmpty');
+
+  function clone(x){ return JSON.parse(JSON.stringify(x)); }
+
+  /* ---------- Grid ---------- */
+  var dragFrom = null;
+
+  function renderGrid(){
+    grid.innerHTML = '';
+    var pc = document.getElementById('postCount'); if(pc) pc.textContent = posts.length;
+    var db = document.getElementById('delBlockBtn'); if(db) db.disabled = posts.length<=9;
+    posts.forEach(function(p, i){
+      var t = document.createElement('div');
+      t.className = 'tile' + (p.img ? ' uploaded' : '') + (selected===i?' selected':'');
+      t.tabIndex = 0;
+      t.setAttribute('role','button');
+      t.setAttribute('aria-label','Publicação '+(i+1)+': '+p.concept);
+      t.draggable = true;
+      t.dataset.i = i;
+      t.style.backgroundImage = p.img ? 'url('+p.img+')' : p.bg;
+
+      var veilHide = (p.img && !showConcept) ? ' hide' : '';
+      var fmtGlyph = p.format==='Reel' ? '▶' : (p.format==='Carrossel' ? '❏' : '');
+      t.innerHTML =
+        '<span class="num">'+(i+1)+'</span>'+
+        (fmtGlyph ? '<span class="fmt">'+fmtGlyph+'</span>' : '')+
+        '<div class="veil'+veilHide+'">'+
+          '<span class="kind">'+p.kind+'</span>'+
+          '<span class="concept">'+p.concept+'</span>'+
+        '</div>'+
+        '<span class="pill-dot" style="background:'+PILLARS[p.pillar].color+'"></span>';
+
+      t.addEventListener('click', function(){ select(i); });
+      t.addEventListener('keydown', function(e){
+        if(e.key==='Enter'||e.key===' '){ e.preventDefault(); select(i); }
+      });
+      t.addEventListener('dragstart', function(e){ dragFrom=i; t.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+      t.addEventListener('dragend', function(){ t.classList.remove('dragging'); clearOver(); });
+      t.addEventListener('dragover', function(e){ e.preventDefault(); t.classList.add('over'); });
+      t.addEventListener('dragleave', function(){ t.classList.remove('over'); });
+      t.addEventListener('drop', function(e){ e.preventDefault(); move(dragFrom, i); });
+
+      grid.appendChild(t);
+    });
+  }
+  function clearOver(){ Array.prototype.forEach.call(grid.children, function(c){ c.classList.remove('over'); }); }
+
+  function move(from, to){
+    if(from===null || from===to) return;
+    var item = posts.splice(from,1)[0];
+    posts.splice(to,0,item);
+    if(selected===from) selected=to;
+    else if(from<selected && to>=selected) selected--;
+    else if(from>selected && to<=selected) selected++;
+    renderGrid(); renderLegend(); renderEvaluator();
+    if(selected!==null) renderInspector();
+  }
+
+  /* ---------- Inspector ---------- */
+  function select(i){ selected=i; renderGrid(); renderInspector(); }
+
+  function renderInspector(){
+    var p = posts[selected];
+    inspEmpty.style.display='none';
+    inspBody.style.display='block';
+    var pl = PILLARS[p.pillar];
+    var thumb = p.img ? 'url('+p.img+')' : p.bg;
+
+    var options = Object.keys(PILLARS).map(function(k){
+      return '<option value="'+k+'"'+(k===p.pillar?' selected':'')+'>'+PILLARS[k].label+'</option>';
+    }).join('');
+    var fmtOptions = ['Reel','Foto','Carrossel'].map(function(f){
+      return '<option value="'+f+'"'+(f===p.format?' selected':'')+'>'+f+'</option>';
+    }).join('');
+
+    inspBody.innerHTML =
+      '<div class="insp-head">'+
+        '<div class="insp-thumb" style="background-image:'+thumb+'"></div>'+
+        '<div class="insp-meta">'+
+          '<div class="b">Post '+(selected+1)+(p.day?' · '+p.day:'')+'</div>'+
+          '<h3>'+p.concept+'</h3>'+
+          '<span class="tag"><span class="d" style="background:'+pl.color+'"></span>'+pl.label+'</span>'+
+          '<span class="tag">'+p.format+'</span>'+
+          '<span class="tag">'+p.kind+'</span>'+
+          (p.col && p.col!=='—' ? '<span class="tag">Coleção '+p.col+'</span>' : '')+
+        '</div>'+
+      '</div>'+
+      '<label class="field" for="capField">Legenda</label>'+
+      '<textarea id="capField">'+p.caption+'</textarea>'+
+      '<div class="caption-count"><span id="capCount">'+p.caption.length+'</span> caracteres</div>'+
+      '<div class="two-col">'+
+        '<div><label class="field" for="fmtField">Formato</label>'+
+        '<select id="fmtField">'+fmtOptions+'</select></div>'+
+        '<div><label class="field" for="pillarField">Pilar</label>'+
+        '<select id="pillarField">'+options+'</select></div>'+
+      '</div>'+
+      '<div class="insp-actions">'+
+        '<label class="btn file-btn">'+(p.format==='Reel'?'Subir capa do Reel':'Subir foto do ensaio')+
+          '<input type="file" id="fileField" accept="image/*" />'+
+        '</label>'+
+        (p.img ? '<button class="btn" id="clearImg">'+(p.format==='Reel'?'Remover capa':'Remover foto')+'</button>' : '')+
+        '<button class="btn" id="moveBack" '+(selected===0?'disabled':'')+'>◀ Voltar</button>'+
+        '<button class="btn" id="moveFwd" '+(selected===posts.length-1?'disabled':'')+'>Avançar ▶</button>'+
+      '</div>'+
+      '<div id="postEval" class="post-eval"></div>';
+
+    var cap = document.getElementById('capField');
+    cap.addEventListener('input', function(){
+      p.caption = cap.value;
+      document.getElementById('capCount').textContent = cap.value.length;
+      renderPostEval();
+    });
+    document.getElementById('fmtField').addEventListener('change', function(e){
+      p.format = e.target.value; renderGrid(); renderInspector(); renderEvaluator();
+    });
+    document.getElementById('pillarField').addEventListener('change', function(e){
+      p.pillar = e.target.value; renderGrid(); renderLegend(); renderInspector(); renderEvaluator();
+    });
+    document.getElementById('fileField').addEventListener('change', function(e){
+      var f = e.target.files[0]; if(!f) return;
+      var r = new FileReader();
+      r.onload = function(ev){ p.img = ev.target.result; renderGrid(); renderInspector(); };
+      r.readAsDataURL(f);
+    });
+    var clr = document.getElementById('clearImg');
+    if(clr) clr.addEventListener('click', function(){ delete p.img; renderGrid(); renderInspector(); });
+    document.getElementById('moveBack').addEventListener('click', function(){ move(selected, selected-1); });
+    document.getElementById('moveFwd').addEventListener('click', function(){ move(selected, selected+1); });
+    renderPostEval();
+  }
+
+  /* ---------- Legend ---------- */
+  function renderLegend(){
+    legend.innerHTML = '';
+    Object.keys(PILLARS).forEach(function(k){
+      var pl = PILLARS[k];
+      var count = posts.filter(function(p){ return p.pillar===k; }).length;
+      var row = document.createElement('div');
+      row.className='leg-row';
+      row.innerHTML =
+        '<span class="d" style="background:'+pl.color+'"></span>'+
+        '<span class="lab"><b>'+pl.label+'</b><small>'+pl.desc+'</small></span>'+
+        '<span class="cnt">'+count+'</span>';
+      legend.appendChild(row);
+    });
+  }
+
+  /* ---------- Avaliador (0–10) ---------- */
+  function lum(hex){
+    var m = hex.replace('#',''); 
+    var r=parseInt(m.substr(0,2),16), g=parseInt(m.substr(2,2),16), b=parseInt(m.substr(4,2),16);
+    return (0.2126*r + 0.7152*g + 0.0722*b)/255;
+  }
+  function tileLum(p){
+    if(p.img) return 0.5; // foto real: tom neutro para não distorcer a nota
+    var hexes = (p.bg.match(/#([0-9A-Fa-f]{6})/g)||['#808080']);
+    var s=0; hexes.forEach(function(h){ s+=lum(h); });
+    return s/hexes.length;
+  }
+  function clamp(x){ return Math.max(0,Math.min(10,x)); }
+
+  function evaluate(arr){
+    var n = arr.length;
+    var fmt = {Reel:0,Foto:0,Carrossel:0};
+    var pil = {produto:0,lifestyle:0,origem:0,proposito:0,comunidade:0};
+    arr.forEach(function(p){ fmt[p.format]=(fmt[p.format]||0)+1; pil[p.pillar]++; });
+    var crit = [];
+
+    // 1 — Bloco cheio (3×3)
+    var s1 = n>=9?10 : n>=7?7 : n>=4?5 : 3;
+    crit.push({w:1, name:"Bloco cheio (3×3)", score:s1,
+      note: n>=9 ? "9 quadros — quadrante fechado, primeira impressão completa."
+                 : "Faltam "+(9-n)+" para fechar o 3×3; um bloco incompleto pesa na leitura do perfil."});
+
+    // 2 — Mix de formatos
+    var needCarr = n>=8?2:1;
+    var s2=10, mixNotes=[];
+    if(fmt.Reel < n*0.25){ s2-=3; mixNotes.push("poucos Reels (são o motor de alcance)"); }
+    else if(fmt.Reel > n*0.45){ s2-=2; mixNotes.push("Reels demais, pouca foto editorial"); }
+    if(fmt.Carrossel < needCarr){ s2-=2; mixNotes.push("menos de "+needCarr+" carrosséis"); }
+    if(fmt.Foto < n*0.35){ s2-=2; mixNotes.push("poucas fotos únicas"); }
+    s2=clamp(s2);
+    crit.push({w:2, name:"Mix de formatos", score:s2,
+      note:(fmt.Reel+" Reels · "+fmt.Foto+" fotos · "+fmt.Carrossel+" carrosséis"+
+            (mixNotes.length?" — "+mixNotes.join("; ")+".":" — proporção Vuori equilibrada."))});
+
+    // 3 — Ritmo da grade (alternância)
+    var run3f=0, run3k=0;
+    for(var i=2;i<n;i++){
+      if(arr[i].format===arr[i-1].format && arr[i-1].format===arr[i-2].format){ run3f++; }
+      if(arr[i].kind===arr[i-1].kind && arr[i-1].kind===arr[i-2].kind){ run3k++; }
+    }
+    var s3=clamp(10 - 3*run3f - 2*run3k);
+    crit.push({w:2, name:"Ritmo da grade", score:s3,
+      note:(run3f||run3k) ? "Três iguais em sequência quebram o ritmo. Intercale formato e estilo."
+                          : "Boa alternância — nenhum trio repetido em linha."});
+
+    // 4 — Equilíbrio de pilares
+    var s4=10, pilNotes=[];
+    ["produto","lifestyle","origem","proposito"].forEach(function(k){
+      if(pil[k]===0){ s4-=2.5; pilNotes.push(PILLARS[k].label+" ausente"); }
+    });
+    var domKey="produto", domVal=0;
+    ["produto","lifestyle","origem","proposito"].forEach(function(k){ if(pil[k]>domVal){domVal=pil[k];domKey=k;} });
+    var maxShare = domVal/n;
+    var domLabel = PILLARS[domKey].label;
+    if(maxShare>0.70){ s4-=3; pilNotes.push(domLabel+" concentra >70% — muito unilateral"); }
+    else if(maxShare>0.60){ s4-=2; pilNotes.push(domLabel+" concentra >60%"); }
+    else if(maxShare>0.50){ s4-=1; pilNotes.push(domLabel+" um pouco pesado — a régua Vuori pede mais Lifestyle"); }
+    s4=clamp(s4);
+    crit.push({w:2, name:"Equilíbrio de pilares", score:s4,
+      note: pilNotes.length ? pilNotes.join("; ")+"." : "Produto, Lifestyle, Origem e Propósito bem distribuídos."});
+
+    // 5 — Diferencial fábrica (Origem)
+    var origem = arr.filter(function(p){ return p.pillar==='origem' || p.kind==='Bastidor'; }).length;
+    var needOrig = Math.max(1, Math.round(n/7));
+    var s5 = origem>=needOrig?10 : origem>0?6 : 2;
+    crit.push({w:1, name:"Diferencial fábrica", score:s5,
+      note: origem>=needOrig ? origem+" post(s) de origem — o feito-no-Brasil que ninguém copia está presente."
+                      : "Só "+origem+" post de fábrica/origem neste bloco. É seu diferencial: garanta ao menos "+needOrig+"."});
+
+    // 6 — Áurea domina · Essen segundo ato
+    var aurea=0, essen=0, earlyEssen=0;
+    arr.forEach(function(p,idx){
+      if(p.col==='Áurea') aurea++;
+      if(p.col==='Essen'){ essen++; if(idx < Math.floor(n*0.45)) earlyEssen++; }
+    });
+    var s6=10, colNotes=[];
+    if(essen>aurea){ s6-=3; colNotes.push("Essen não deveria dominar a Áurea (herói)"); }
+    if(earlyEssen>0){ s6-=Math.min(4,2*earlyEssen); colNotes.push("Essen aparecendo cedo demais — segure como segundo ato"); }
+    s6=clamp(s6);
+    crit.push({w:1, name:"Áurea × Essen", score:s6,
+      note: colNotes.length ? colNotes.join("; ")+"." : "Áurea domina e a Essen entra na segunda metade — segundo ato certo."});
+
+    // 7 — Ritmo tonal (coesão Vuori)
+    var badRuns=0, runLen=1, prevClass=null;
+    for(var j=0;j<n;j++){
+      var L=tileLum(arr[j]); var cls = L<0.30?'d' : L>0.62?'l' : 'm';
+      if(cls===prevClass && cls!=='m'){ runLen++; if(runLen===3) badRuns++; }
+      else runLen=1;
+      prevClass=cls;
+    }
+    var s7=clamp(10 - 2*badRuns);
+    crit.push({w:1, name:"Ritmo tonal", score:s7,
+      note: badRuns ? "Muitos tons iguais seguidos (claro/escuro). Alterne para a grade respirar."
+                    : "Alternância clara/escura equilibrada — a grade parece colorgraded."});
+
+    var wsum=0, tot=0;
+    crit.forEach(function(c){ tot += c.score*c.w; wsum += c.w; });
+    var overall = Math.round((tot/wsum)*10)/10;
+    var label, cls;
+    if(overall>=8.5){ label="Pronto para lançar"; cls="g"; }
+    else if(overall>=7){ label="Quase lá"; cls="o"; }
+    else if(overall>=5){ label="Ajustes necessários"; cls="w"; }
+    else { label="Revisar o bloco"; cls="b"; }
+    return {overall:overall, label:label, cls:cls, crit:crit};
+  }
+
+  function critRows(crit){
+    return crit.map(function(c){
+      var sc=c.score; var scls=sc>=8?'g':sc>=6?'o':sc>=4?'w':'b';
+      return '<div class="crit">'+
+        '<div class="crit-top"><span class="crit-name">'+c.name+'</span>'+
+        '<span class="crit-score '+scls+'">'+sc.toFixed(1)+'</span></div>'+
+        '<div class="crit-bar"><i class="'+scls+'" style="width:'+(sc*10)+'%"></i></div>'+
+        '<div class="crit-note">'+c.note+'</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  function renderEvaluator(){
+    var panel = document.getElementById('evalPanel');
+    // divide em blocos de 9
+    var blocks=[];
+    for(var i=0;i<posts.length;i+=9) blocks.push(posts.slice(i,i+9));
+    if(blocks.length===0) blocks=[[]];
+
+    var results = blocks.map(function(b){ return evaluate(b); });
+    var html = '<div class="eyebrow">Avaliação por quadrante · de 9 em 9</div>';
+
+    // média geral quando há mais de um bloco
+    if(blocks.length>1){
+      var avg=0; results.forEach(function(r){ avg+=r.overall; });
+      avg=Math.round((avg/results.length)*10)/10;
+      var acls=avg>=8.5?'g':avg>=7?'o':avg>=5?'w':'b';
+      html += '<div class="score-hero">'+
+        '<div class="score-num '+acls+'">'+avg.toFixed(1)+'<small>/10</small></div>'+
+        '<div class="score-lab"><b class="'+acls+'">Média de '+blocks.length+' quadrantes</b>'+
+        '<span>Cada bloco de 9 é avaliado à parte, abaixo.</span></div></div>';
+    }
+
+    blocks.forEach(function(b, bi){
+      var r=results[bi];
+      var a=bi*9+1, z=bi*9+b.length;
+      var multi=blocks.length>1;
+      html += '<div class="block'+(multi?' sep':'')+'">'+
+        (multi ? '<div class="block-head">Quadrante '+(bi+1)+' · posts '+a+'–'+z+'</div>' : '')+
+        '<div class="score-hero">'+
+          '<div class="score-num '+r.cls+'">'+r.overall.toFixed(1)+'<small>/10</small></div>'+
+          '<div class="score-lab"><b class="'+r.cls+'">'+r.label+'</b>'+
+          '<span>'+(multi?'Bloco de 9 · ':'')+'nota ponderada pelas estratégias da Ellun.</span></div>'+
+        '</div>'+
+        '<div class="crit-list">'+critRows(r.crit)+'</div>'+
+      '</div>';
+    });
+
+    panel.innerHTML = html;
+    if(typeof scheduleSave==='function') scheduleSave();
+  }
+
+  /* ---------- Avaliador por post (0–10) ---------- */
+  /* ---------- Avaliador de retenção do Reel ---------- */
+  function ensureReel(p){
+    if(p.format==='Reel' && !p.reel){
+      p.reel={hook:'medio', dur:'ideal', audio:true, onscreen:true, cover:false};
+    }
+  }
+  function evaluateReel(p){
+    var rl=p.reel||{hook:'medio',dur:'ideal',audio:true,onscreen:true,cover:false};
+    var crit=[];
+    var hook={forte:10,medio:6,fraco:2}[rl.hook];
+    crit.push({w:3,name:"Gancho (0–3s)",score:hook,
+      note: hook>=10?"Para o scroll de cara — o fator nº1 de retenção.":
+            hook>=6?"Gancho ok, mas dá pra ser mais forte nos 3 primeiros segundos.":
+            "Sem gancho, o Reel morre no 1º segundo. Abra com movimento ou pergunta visual."});
+    var dur={ideal:10,ok:8,longa:5,curta:6}[rl.dur];
+    crit.push({w:1,name:"Duração",score:dur,
+      note: rl.dur==='ideal'?"7–15s: faixa de melhor retenção para lançamento.":
+            rl.dur==='ok'?"15–30s funciona se o ritmo segurar.":
+            rl.dur==='longa'?">30s exige história forte para não perder gente.":
+            "<7s é curto demais para gerar salvamento/compartilhamento."});
+    crit.push({w:2,name:"Áudio em alta",score:rl.audio?10:4,
+      note: rl.audio?"Áudio em tendência amplia o alcance orgânico.":"Sem áudio em alta você perde o principal empurrão de distribuição."});
+    crit.push({w:1.5,name:"Texto na tela",score:rl.onscreen?10:6,
+      note: rl.onscreen?"Texto na tela retém quem assiste sem som (a maioria).":"Adicione texto/legenda — muita gente assiste no mudo."});
+    crit.push({w:1,name:"Capa pensada",score:rl.cover?10:6,
+      note: rl.cover?"Capa desenhada mantém a grade coesa e convida ao play.":"Defina uma capa na paleta — o frame padrão quebra o 3×3."});
+    var wsum=0,tot=0; crit.forEach(function(c){ tot+=c.score*c.w; wsum+=c.w; });
+    var overall=Math.round((tot/wsum)*10)/10;
+    var cls=overall>=8.5?'g':overall>=7?'o':overall>=5?'w':'b';
+    var label=overall>=8.5?'Reel forte':overall>=7?'Bom, pode reter mais':overall>=5?'Retenção frágil':'Reel não vai reter';
+    return {overall:overall,label:label,cls:cls,crit:crit};
+  }
+
+  function evaluatePost(p){
+    var crit=[];
+    var cap=(p.caption||'').trim();
+    var len=cap.length;
+
+    // A) Legenda
+    var emojis=(cap.match(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u2728\u2600-\u26FF✦]/gu)||[]).length;
+    var sA;
+    if(len===0) sA=0;
+    else if(len<15) sA=4;
+    else if(len<40) sA=7;
+    else if(len<=220) sA=10;
+    else if(len<=320) sA=8;
+    else sA=6;
+    if(emojis>=4) sA=clamp(sA-2);
+    if(/!{2,}/.test(cap)) sA=clamp(sA-2);
+    crit.push({name:"Legenda", score:sA,
+      note: len===0?"Sem legenda.":
+            len<40?"Curta — dá pra dizer um pouco mais, mantendo o tom editorial.":
+            len>320?"Longa demais para o feed; enxugue.":
+            "Comprimento no ponto para uma legenda premium."});
+
+    // B) Conformidade "nunca publica"
+    var sB=10, viol=[];
+    var rules=[
+      [/desconto|promo(ç|c)|cupom|\d+%\s*off|\boff\b|frete gr(á|a)tis/i,"tom de promoção/desconto"],
+      [/compre agora|corre\b|imperd(í|i)vel|(ú|u)ltima chance|acaba hoje/i,"gatilho de urgência agressivo"],
+      [/n(ã|a)o desista|sem desculpas|foco e f(é|e)/i,"motivação fitness genérica"],
+      [/\blive\b|track\s*&?\s*field|vuori/i,"menção a concorrente"]
+    ];
+    rules.forEach(function(r){ if(r[0].test(cap)){ sB-=3; viol.push(r[1]); } });
+    sB=clamp(sB);
+    crit.push({name:"Conformidade de marca", score:sB,
+      note: viol.length ? "Revisar: "+viol.join("; ")+" — vai contra o \u201Cnunca publica\u201D."
+                        : "Dentro da voz Ellun, sem gatilho proibido."});
+
+    // C) Formato × conteúdo
+    var match={
+      Reel:{Movimento:10,Lifestyle:10,Bastidor:10,Textura:10,Retrato:9,Editorial:7,Detalhe:8,Manifesto:7,Teaser:8,Conceito:7,Carrossel:6},
+      Foto:{Editorial:10,Manifesto:10,Retrato:10,Lifestyle:9,Bastidor:8,Detalhe:7,Conceito:9,Teaser:8,Movimento:6,Textura:6},
+      Carrossel:{Detalhe:10,Editorial:10,Lifestyle:8,Retrato:7,Bastidor:8,Manifesto:7,Movimento:6,Textura:6,Conceito:7,Teaser:6}
+    };
+    var sC=(match[p.format]&&match[p.format][p.kind])||7;
+    crit.push({name:"Formato × conteúdo", score:sC,
+      note: sC>=9 ? p.format+" combina com "+p.kind+"."
+          : sC>=7 ? "OK — mas "+p.kind+" às vezes rende mais em outro formato."
+          : p.kind+" pede movimento: considere um Reel."});
+
+    // D) Foco por fase
+    var launch=/set/i.test(p.day||'');
+    var hasCTA=/ellun\.com|no ar|acesso|link|→|▶|garanta/i.test(cap);
+    var hardSell=/compre|desconto|cupom/i.test(cap);
+    var sD;
+    if(launch){ sD=hasCTA?10:6; } else { sD=hardSell?4:10; }
+    crit.push({name: launch?"CTA de lançamento":"Sem venda dura", score:sD,
+      note: launch ? (hasCTA?"Post de lançamento com direção clara (link/acesso).":"É post de lançamento — inclua link ou chamada de acesso.")
+                   : (hardSell?"Post de marca com cara de venda — segure o hard sell.":"Constrói desejo sem empurrar venda. Certo para a fase.")});
+
+    var base=0; crit.forEach(function(c){ base+=c.score; }); base=base/crit.length;
+    var reel=null, overall;
+    if(p.format==='Reel'){
+      ensureReel(p);
+      reel=evaluateReel(p);
+      overall=Math.round((base*0.6 + reel.overall*0.4)*10)/10; // vídeo pesa 40% num Reel
+    } else {
+      overall=Math.round(base*10)/10;
+    }
+    var cls=overall>=8.5?'g':overall>=7?'o':overall>=5?'w':'b';
+    var label=overall>=8.5?'Post forte':overall>=7?'Bom, pequenos ajustes':overall>=5?'Precisa de ajustes':'Repensar o post';
+    return {overall:overall,label:label,cls:cls,crit:crit,ready:!!p.img,reel:reel};
+  }
+
+  function renderPostEval(){
+    var host=document.getElementById('postEval'); if(!host||selected===null) return;
+    var p=posts[selected]; var r=evaluatePost(p);
+    var rows=r.crit.map(function(c){
+      var scls=c.score>=8?'g':c.score>=6?'o':c.score>=4?'w':'b';
+      return '<div class="crit">'+
+        '<div class="crit-top"><span class="crit-name">'+c.name+'</span>'+
+        '<span class="crit-score '+scls+'">'+c.score.toFixed(1)+'</span></div>'+
+        '<div class="crit-bar"><i class="'+scls+'" style="width:'+(c.score*10)+'%"></i></div>'+
+        '<div class="crit-note">'+c.note+'</div>'+
+      '</div>';
+    }).join('');
+
+    var reelHTML='';
+    if(p.format==='Reel' && r.reel){
+      var rl=p.reel, rr=r.reel;
+      var reelRows=rr.crit.map(function(c){
+        var scls=c.score>=8?'g':c.score>=6?'o':c.score>=4?'w':'b';
+        return '<div class="crit">'+
+          '<div class="crit-top"><span class="crit-name">'+c.name+'</span>'+
+          '<span class="crit-score '+scls+'">'+c.score.toFixed(1)+'</span></div>'+
+          '<div class="crit-bar"><i class="'+scls+'" style="width:'+(c.score*10)+'%"></i></div>'+
+          '<div class="crit-note">'+c.note+'</div>'+
+        '</div>';
+      }).join('');
+      var hookOpts=[['forte','Forte'],['medio','Médio'],['fraco','Fraco']].map(function(o){
+        return '<option value="'+o[0]+'"'+(rl.hook===o[0]?' selected':'')+'>'+o[1]+'</option>'; }).join('');
+      var durOpts=[['ideal','Ideal · 7–15s'],['ok','OK · 15–30s'],['longa','Longa · >30s'],['curta','Curta · <7s']].map(function(o){
+        return '<option value="'+o[0]+'"'+(rl.dur===o[0]?' selected':'')+'>'+o[1]+'</option>'; }).join('');
+      reelHTML=
+        '<div class="reel-eval">'+
+          '<div class="pe-head"><div class="eyebrow" style="margin:0">Retenção do Reel</div>'+
+            '<span class="score-num sm '+rr.cls+'" style="font-size:26px">'+rr.overall.toFixed(1)+'<small>/10</small></span></div>'+
+          '<div class="reel-controls">'+
+            '<div><label class="field" for="rlHook">Gancho (0–3s)</label><select id="rlHook">'+hookOpts+'</select></div>'+
+            '<div><label class="field" for="rlDur">Duração</label><select id="rlDur">'+durOpts+'</select></div>'+
+          '</div>'+
+          '<div class="reel-togs">'+
+            '<button class="rl-tog'+(rl.audio?' on':'')+'" data-k="audio">Áudio em alta</button>'+
+            '<button class="rl-tog'+(rl.onscreen?' on':'')+'" data-k="onscreen">Texto na tela</button>'+
+            '<button class="rl-tog'+(rl.cover?' on':'')+'" data-k="cover">Capa pensada</button>'+
+          '</div>'+
+          '<div class="crit-list" style="margin-top:14px">'+reelRows+'</div>'+
+        '</div>';
+    }
+
+    host.innerHTML =
+      '<div class="pe-head">'+
+        '<div class="eyebrow" style="margin:0">Nota do post</div>'+
+        '<span class="ready '+(r.ready?'yes':'no')+'">'+(r.ready?(p.format==='Reel'?'Capa ✓':'Foto real ✓'):(p.format==='Reel'?'Sem capa':'Placeholder'))+'</span>'+
+      '</div>'+
+      '<div class="pe-score">'+
+        '<span class="score-num sm '+r.cls+'">'+r.overall.toFixed(1)+'<small>/10</small></span>'+
+        '<b class="'+r.cls+'">'+r.label+'</b>'+
+      '</div>'+
+      (p.format==='Reel'?'<div class="pe-hint">Num Reel, a retenção do vídeo pesa 40% nesta nota.</div>':'')+
+      '<div class="crit-list">'+rows+'</div>'+
+      reelHTML;
+
+    if(p.format==='Reel'){
+      var hk=document.getElementById('rlHook');
+      if(hk) hk.addEventListener('change', function(e){ p.reel.hook=e.target.value; renderPostEval(); });
+      var du=document.getElementById('rlDur');
+      if(du) du.addEventListener('change', function(e){ p.reel.dur=e.target.value; renderPostEval(); });
+      Array.prototype.forEach.call(host.querySelectorAll('.rl-tog'), function(btn){
+        btn.addEventListener('click', function(){ var k=btn.getAttribute('data-k'); p.reel[k]=!p.reel[k]; renderPostEval(); });
+      });
+    }
+    if(typeof scheduleSave==='function') scheduleSave();
+  }
+
+  /* ---------- Controls ---------- */
+  document.getElementById('toggleConcept').addEventListener('click', function(){
+    showConcept = !showConcept;
+    this.classList.toggle('on', showConcept);
+    this.setAttribute('aria-pressed', showConcept);
+    renderGrid();
+  });
+  document.getElementById('addBlockBtn').addEventListener('click', function(){
+    posts = posts.concat(makeBlock());
+    renderGrid(); renderLegend(); renderEvaluator();
+    if(selected!==null) renderInspector();
+  });
+  document.getElementById('delBlockBtn').addEventListener('click', function(){
+    if(posts.length<=9) return;
+    posts = posts.slice(0, posts.length-9);
+    if(selected!==null && selected>posts.length-1){ selected=null; inspBody.style.display='none'; inspEmpty.style.display='block'; }
+    renderGrid(); renderLegend(); renderEvaluator();
+    if(selected!==null) renderInspector();
+  });
+
+  var resetArmed=false, resetTimer=null;
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    var btn=this;
+    if(!resetArmed){
+      resetArmed=true; btn.textContent='Confirmar?'; btn.classList.add('on');
+      resetTimer=setTimeout(function(){ resetArmed=false; btn.textContent='Recomeçar'; btn.classList.remove('on'); }, 3000);
+      return;
+    }
+    clearTimeout(resetTimer); resetArmed=false; btn.textContent='Recomeçar'; btn.classList.remove('on');
+    posts = clone(SEED); selected=null; showConcept=true;
+    var tc=document.getElementById('toggleConcept'); tc.classList.add('on'); tc.setAttribute('aria-pressed',true);
+    inspBody.style.display='none'; inspEmpty.style.display='block';
+    renderGrid(); renderLegend(); renderEvaluator();
+  });
+
+  /* ---------- Salvar / Exportar / Importar ---------- */
+  var STORAGE_KEY='ellun-feed-v1';
+  var statusEl=document.getElementById('saveStatus');
+  var statusTimer=null;
+  function setStatus(msg){
+    statusEl.textContent=msg;
+    if(statusTimer) clearTimeout(statusTimer);
+    statusTimer=setTimeout(function(){ statusEl.textContent=''; }, 4000);
+  }
+  function snapshot(){ return JSON.stringify({v:1, showConcept:showConcept, posts:posts}); }
+
+  async function saveState(silent){
+    var data=snapshot();
+    var okClaude=false, okLocal=false;
+    try{
+      if(window.storage && window.storage.set){ await window.storage.set(STORAGE_KEY, data, false); okClaude=true; }
+    }catch(e){ /* segue para o localStorage */ }
+    try{
+      if(window.localStorage){ window.localStorage.setItem(STORAGE_KEY, data); okLocal=true; }
+    }catch(e){ /* localStorage cheio ou indisponível */ }
+    if(!silent){
+      if(okClaude || okLocal) setStatus('Salvo ✓');
+      else setStatus('Sem armazenamento — use Baixar');
+    } else if(!okClaude && !okLocal){
+      setStatus('Muito pesado p/ salvar — use Baixar');
+    }
+  }
+  var autosaveTimer=null;
+  function scheduleSave(){
+    if(autosaveTimer) clearTimeout(autosaveTimer);
+    autosaveTimer=setTimeout(function(){ saveState(true); }, 1000);
+  }
+  async function loadState(){
+    // 1) armazenamento do Claude (quando aberto aqui dentro)
+    try{
+      if(window.storage && window.storage.get){
+        var r=await window.storage.get(STORAGE_KEY);
+        if(r && r.value){
+          var obj=JSON.parse(r.value);
+          if(obj && obj.posts && obj.posts.length){ posts=obj.posts; if(typeof obj.showConcept==='boolean') showConcept=obj.showConcept; return true; }
+        }
+      }
+    }catch(e){}
+    // 2) localStorage do navegador (quando hospedado, ex.: GitHub Pages)
+    try{
+      if(window.localStorage){
+        var raw=window.localStorage.getItem(STORAGE_KEY);
+        if(raw){
+          var o2=JSON.parse(raw);
+          if(o2 && o2.posts && o2.posts.length){ posts=o2.posts; if(typeof o2.showConcept==='boolean') showConcept=o2.showConcept; return true; }
+        }
+      }
+    }catch(e){}
+    return false;
+  }
+
+  function exportJSON(){
+    try{
+      var blob=new Blob([snapshot()], {type:'application/json'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');
+      a.href=url; a.download='ellun-feed.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      setStatus('Backup baixado ✓');
+    }catch(e){ setStatus('Falha ao baixar'); }
+  }
+  function importJSON(file){
+    var rd=new FileReader();
+    rd.onload=function(ev){
+      try{
+        var obj=JSON.parse(ev.target.result);
+        if(obj && obj.posts && obj.posts.length){
+          posts=obj.posts;
+          if(typeof obj.showConcept==='boolean') showConcept=obj.showConcept;
+          selected=null; inspBody.style.display='none'; inspEmpty.style.display='block';
+          var tc=document.getElementById('toggleConcept'); tc.classList.toggle('on',showConcept); tc.setAttribute('aria-pressed',showConcept);
+          renderGrid(); renderLegend(); renderEvaluator();
+          setStatus('Importado ✓'); saveState();
+        } else { setStatus('Arquivo inválido'); }
+      }catch(e){ setStatus('Arquivo inválido'); }
+    };
+    rd.readAsText(file);
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', function(){ saveState(false); });
+  document.getElementById('exportBtn').addEventListener('click', exportJSON);
+  document.getElementById('importFile').addEventListener('change', function(e){
+    var f=e.target.files[0]; if(f) importJSON(f); e.target.value='';
+  });
+
+  (async function init(){
+    var loaded=await loadState();
+    if(loaded){
+      var tc=document.getElementById('toggleConcept'); tc.classList.toggle('on',showConcept); tc.setAttribute('aria-pressed',showConcept);
+      setStatus('Alterações restauradas');
+    }
+    renderGrid(); renderLegend(); renderEvaluator();
+  })();
+})();
+</script>
+</body>
+</html>
