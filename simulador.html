@@ -410,7 +410,7 @@
         <div class="coll">
           <div class="coll-title" style="color:var(--olive)">Áurea</div>
           <div class="swatches">
-            <div class="sw"><span style="background:#6C7458"></span>Verde Oliva</div>
+            <div class="sw"><span style="background:#6C7458"></span>Verde Oliva · âncora</div>
             <div class="sw"><span style="background:#ECE4D4"></span>Off White Areia</div>
             <div class="sw"><span style="background:#3A2318"></span>Chocolate</div>
           </div>
@@ -418,13 +418,13 @@
         <div class="coll" style="margin-top:16px;">
           <div class="coll-title" style="color:var(--charcoal)">Essen</div>
           <div class="swatches">
-            <div class="sw"><span style="background:#191917"></span>Preta</div>
+            <div class="sw"><span style="background:#191917"></span>Preta · âncora</div>
             <div class="sw"><span style="background:#AE5030"></span>Terracota</div>
             <div class="sw"><span style="background:#E8DCC7"></span>Areia Claro</div>
           </div>
         </div>
         <div class="note" style="margin-top:16px;">
-          Os degradês dos quadros já seguem essas cores: Áurea puxa oliva, areia e chocolate; Essen aparece no post 9 com terracota e preta. Ao subir suas fotos reais, a paleta se mantém coesa porque a origem já é a mesma.
+          Pré-lançamento em modo teaser: o feed ancora em <b>Oásis (verde)</b> na Áurea e <b>Ônix (preto)</b> na Essen. As outras cores ficam guardadas para a revelação do dia 10 — o feed insinua, não cataloga.
         </div>
       </section>
 
@@ -471,9 +471,13 @@
   // Cores reais das coleções
   // Áurea: Verde Oliva #6C7458 · Off White Areia #ECE4D4 · Chocolate #3A2318
   // Essen: Preta #191917 · Terracota #AE5030 · Areia Claro #E8DCC7
+  // Cores-ÂNCORA do pré-lançamento: Áurea → Oásis (verde) · Essen → Ônix (preto)
   var C = {
     oliva:"#6C7458", offwhite:"#ECE4D4", chocolate:"#3A2318",
-    preta:"#191917", terracota:"#AE5030", areiaclaro:"#E8DCC7"
+    preta:"#191917", terracota:"#AE5030", areiaclaro:"#E8DCC7",
+    oasis:"#6C7458",  // âncora Áurea (verde Oásis)
+    onix:"#1C1B19",   // âncora Essen (preto Ônix)
+    shadow:"#2A2824"  // sombra neutra para teaser
   };
 
   // Quadrante de lançamento — 3×3 de primeira impressão · 9 posts (3 Reels · 4 fotos · 2 carrosséis)
@@ -481,39 +485,39 @@
   var SEED = [
     {n:1, format:"Foto",      kind:"Editorial", pillar:"produto",   col:"Áurea", day:"18/ago",
      concept:"Legging Áurea. A elegância também se move.",
-     caption:"Legging Áurea. Porque elegância e movimento nunca deveriam ter se separado.",
+     caption:"Tem peças que você compra. E tem peças que você entende no primeiro toque. Ellux™, nosso tecido exclusivo. Algo novo está chegando. ✦\n#Ellun #Ellux #athleisure #pilates #modaativa",
      bg:g(C.oliva,C.offwhite,160)},
     {n:2, format:"Reel",      kind:"Movimento", pillar:"produto",   col:"Áurea", day:"20/ago",
      concept:"O tecido em movimento — caminhar, agachar, alongar.",
-     caption:"O argumento não se explica, se vê. Áurea em movimento. ▶",
+     caption:"O argumento não se explica, se vê. Ellux™ em movimento diz o que nenhuma foto consegue. ▶\n#Ellun #Ellux #pilates #athleisure #modaativa",
      bg:g(C.oliva,C.chocolate)},
     {n:3, format:"Foto",      kind:"Manifesto", pillar:"proposito", col:"Áurea", day:"22/ago",
      concept:"Desenhado para valorizar você em cada movimento.",
-     caption:"Desenhado para valorizar você em cada movimento. ✦ #Ellun",
+     caption:"Desenhado para valorizar você em cada movimento. É a única promessa que importa. ✦\n#Ellun #Ellux #vistaomovimento #modaativa",
      bg:g(C.offwhite,C.areiaclaro)},
     {n:4, format:"Reel",      kind:"Editorial", pillar:"origem",    col:"—",     day:"25/ago",
      concept:"Do corte ao acabamento — uma fábrica só nossa.",
-     caption:"Corte, costura, acabamento: tudo em uma fábrica nossa, em Santa Catarina. Feito no Brasil, do começo ao fim. ▶",
+     caption:"Do corte ao acabamento, tudo em uma fábrica que é só nossa. Feito no Brasil — e você vai sentir a diferença. ▶\n#Ellun #Ellux #feitonobrasil #marcabrasileira",
      bg:g(C.oliva,C.chocolate,150)},
     {n:5, format:"Carrossel", kind:"Detalhe",   pillar:"produto",   col:"Áurea", day:"27/ago",
      concept:"Está nos detalhes: cós, costura, canelado.",
-     caption:"Deslize para ver de perto: o cós que não marca, a costura que não pesa, o caimento que fica. →",
-     bg:g(C.chocolate,C.areiaclaro,160)},
+     caption:"Está nos detalhes — é sempre neles. Deslize e chegue perto: alguns tecidos você só entende quando toca. Ellux™. →\n#Ellun #Ellux #tecidoexclusivo #activewear",
+     bg:g(C.oasis,C.shadow,160)},
     {n:6, format:"Foto",      kind:"Lifestyle", pillar:"lifestyle", col:"Áurea", day:"29/ago",
      concept:"Do pilates ao café, sem trocar de roupa.",
-     caption:"Do estúdio ao café, sem trocar de roupa — e sem perder a compostura.",
+     caption:"Do estúdio ao café, sem trocar de roupa — e sem perder a compostura. É esse o ponto. ✦\n#Ellun #Ellux #athleisure #lifestyleativo #autocuidado",
      bg:g(C.offwhite,C.oliva,165)},
     {n:7, format:"Carrossel", kind:"Editorial", pillar:"produto",   col:"Áurea", day:"1/set",
      concept:"Lookbook Áurea. A coleção herói, look a look.",
-     caption:"Coleção Áurea. Feita para quem não separa elegância de performance. →",
+     caption:"A Áurea está quase pronta pra você. Ainda não é hoje. Mas falta pouco. ✦\n#Ellun #Ellux #athleisure #modaativa #vemai",
      bg:g(C.oliva,C.chocolate,155)},
     {n:8, format:"Foto",      kind:"Editorial", pillar:"produto",   col:"Essen", day:"4/set",
-     concept:"Essen. O segundo ato — preta e terracota.",
-     caption:"Coleção Essen, tecido Hyper Soft. A peça que você coloca segunda e só tira no domingo.",
-     bg:g(C.terracota,C.preta,160)},
+     concept:"Essen. O segundo ato — em breve.",
+     caption:"Existe uma segunda coleção. Essenn™ Hyper Soft. O que ela é, você descobre no lançamento. ✦\n#Ellun #Essenn #athleisure #modaativa #embreve",
+     bg:g(C.onix,C.shadow,160)},
     {n:9, format:"Reel",      kind:"Retrato",   pillar:"proposito", col:"—",     day:"10/set · geral",
      concept:"Por que criamos a Ellun. Está no ar. ✦",
-     caption:"Está no ar. Este é o porquê da Ellun — direto de quem a criou. ▶ ellun.com.br",
+     caption:"Está no ar. Este é o porquê da Ellun — direto de quem a criou. A espera acabou. ▶ ellun.com.br\n#Ellun #Ellux #Essenn #feitonobrasil #lançamento",
      bg:g(C.chocolate,C.preta,165)}
   ];
 
@@ -524,10 +528,10 @@
       {format:"Reel",      kind:"Lifestyle", pillar:"lifestyle", col:"Áurea", bg:g(C.areiaclaro,C.oliva,160)},
       {format:"Foto",      kind:"Manifesto", pillar:"proposito", col:"Áurea", bg:g(C.offwhite,C.areiaclaro)},
       {format:"Reel",      kind:"Editorial", pillar:"origem",    col:"—",     bg:g(C.oliva,C.chocolate,150)},
-      {format:"Carrossel", kind:"Detalhe",   pillar:"produto",   col:"Áurea", bg:g(C.chocolate,C.areiaclaro,160)},
+      {format:"Carrossel", kind:"Detalhe",   pillar:"produto",   col:"Áurea", bg:g(C.oasis,C.shadow,160)},
       {format:"Foto",      kind:"Lifestyle", pillar:"lifestyle", col:"Áurea", bg:g(C.offwhite,C.oliva,165)},
       {format:"Carrossel", kind:"Editorial", pillar:"produto",   col:"Áurea", bg:g(C.oliva,C.chocolate,155)},
-      {format:"Foto",      kind:"Editorial", pillar:"produto",   col:"Essen", bg:g(C.terracota,C.preta,160)},
+      {format:"Foto",      kind:"Editorial", pillar:"produto",   col:"Essen", bg:g(C.onix,C.shadow,160)},
       {format:"Reel",      kind:"Retrato",   pillar:"proposito", col:"—",     bg:g(C.chocolate,C.preta,165)}
     ];
     return tpl.map(function(t){
