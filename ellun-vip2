@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Ellun · Grupo Fundadoras</title>
+<meta name="description" content="Compre 48 horas antes do lançamento, com 10% exclusivo e prioridade de cores e tamanhos. Entre no Grupo Fundadoras da Ellun.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ellun · Grupo Fundadoras">
+<meta property="og:description" content="48 horas antes. 10% exclusivo. Prioridade nas primeiras coleções. Só até 08 de setembro.">
+<meta property="og:image" content="https://i.postimg.cc/zD6P39gt/Ellun-30625.jpg">
+<meta property="og:url" content="https://vip.ellunoficial.com.br/">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- ============================================= -->
+<!-- COLE AQUI O CÓDIGO-BASE DO PIXEL DA META       -->
+<!-- (o bloco <script>...</script> com o ID         -->
+<!--  1760958858276188, igual ao da página principal)-->
+<!-- Sem ele, o evento Lead do botão NÃO dispara.   -->
+<!-- ============================================= -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  @keyframes pulso{
+    0%,100%{transform:scale(1);box-shadow:0 6px 24px rgba(0,0,0,.3);}
+    50%{transform:scale(1.035);box-shadow:0 8px 30px rgba(18,140,74,.45);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .btn{animation:none;}
+  }
+
+  :root{
+    --creme:#F5F0E7;
+    --carvao:#2E2C28;
+    --dourado:#C9A96A;
+    --whatsapp:#128C4A;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  body{
+    background:var(--carvao);
+    font-family:'Jost',-apple-system,BlinkMacSystemFont,sans-serif;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .hero{
+    position:relative;
+    min-height:100svh;min-height:100vh;
+    max-width:520px;margin:0 auto;
+    background:url('https://i.postimg.cc/zD6P39gt/Ellun-30625.jpg') center 20%/cover no-repeat;
+    display:flex;flex-direction:column;justify-content:flex-end;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg,
+      rgba(20,25,12,.35) 0%,
+      rgba(20,25,12,.12) 22%,
+      rgba(18,18,13,.48) 46%,
+      rgba(15,12,8,.90) 74%,
+      rgba(12,10,6,.96) 100%);
+  }
+  .base{position:relative;z-index:2;text-align:center;padding:0 24px 42px;}
+
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(34px,10vw,46px);line-height:1.12;font-weight:500;color:#F7F3EA;
+    text-shadow:0 2px 20px rgba(0,0,0,.55);
+  }
+  h1 em{font-style:italic;font-weight:400;display:block;}
+
+  .sub{
+    font-size:14.5px;line-height:1.65;color:#F0EADC;margin-top:18px;
+    max-width:340px;margin-left:auto;margin-right:auto;
+    text-shadow:0 1px 12px rgba(0,0,0,.75);
+  }
+
+  .destaques{
+    display:flex;justify-content:center;margin-top:26px;
+    max-width:360px;margin-left:auto;margin-right:auto;
+  }
+  .destaque{flex:1;padding:0 6px;border-right:1px solid rgba(232,223,201,.28);}
+  .destaque:last-child{border-right:none;}
+  .destaque-num{
+    font-family:'Cormorant Garamond',serif;font-size:24px;color:#F2EAD6;
+    text-shadow:0 1px 12px rgba(0,0,0,.8);line-height:1.1;
+  }
+  .destaque-txt{
+    font-size:9.5px;letter-spacing:1.4px;text-transform:uppercase;
+    color:#E5DCC6;margin-top:6px;line-height:1.4;
+    text-shadow:0 1px 10px rgba(0,0,0,.9);
+  }
+
+  .btn{
+    display:block;margin:30px auto 12px;max-width:340px;
+    background:#128C4A;color:#fff !important;text-decoration:none;
+    padding:17px;border-radius:10px;
+    font-size:14px;font-weight:500;letter-spacing:2px;text-transform:uppercase;
+    box-shadow:0 6px 24px rgba(0,0,0,.3);
+    transition:opacity .2s;
+    animation:pulso 2.4s ease-in-out infinite;
+  }
+  .btn, .btn:link, .btn:visited{color:#fff !important;}
+  .btn:hover{opacity:.92;}
+
+  .checks{
+    display:flex;justify-content:center;flex-wrap:wrap;gap:6px 16px;
+    font-size:10px;letter-spacing:1.4px;text-transform:uppercase;
+    color:#E1D9C6;text-shadow:0 1px 8px rgba(0,0,0,.7);
+  }
+
+  .encerra{
+    position:relative;z-index:2;text-align:center;
+    font-size:10px;letter-spacing:2px;text-transform:uppercase;
+    color:#CFC6B2;padding-bottom:26px;
+    text-shadow:0 1px 10px rgba(0,0,0,.8);
+  }
+</style>
+</head>
+
+<body>
+
+  <section class="hero">
+    <div class="base">
+      <h1>Compre 48 horas<em>antes de todo mundo</em></h1>
+      <p class="sub">Com 10% exclusivo e prioridade nas cores e tamanhos das primeiras coleções Ellun.</p>
+
+      <div class="destaques">
+        <div class="destaque">
+          <div class="destaque-num">48h</div>
+          <div class="destaque-txt">Acesso<br>antecipado</div>
+        </div>
+        <div class="destaque">
+          <div class="destaque-num">10%</div>
+          <div class="destaque-txt">Desconto<br>exclusivo</div>
+        </div>
+        <div class="destaque">
+          <div class="destaque-num">1ª</div>
+          <div class="destaque-txt">Prioridade<br>de escolha</div>
+        </div>
+      </div>
+
+      <a class="btn" href="https://chat.whatsapp.com/LIaogiv4OxbDrXxeCpujxu" target="_blank" rel="noopener" onclick="fbq('track','Lead')">Entrar no Grupo Fundadoras</a>
+      <div class="checks">
+        <span>✓ 48h antes</span>
+        <span>✓ 10% exclusivo</span>
+        <span>✓ Gratuito</span>
+      </div>
+    </div>
+
+    <div class="encerra">A condição encerra em 08 de setembro</div>
+  </section>
+
+</body>
+</html>
